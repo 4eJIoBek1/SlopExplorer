@@ -1,4 +1,6 @@
-https://4ejiobek1.github.io/SlopExplorer/
+Me: Mom, can we have yume 2kki explorer?
+Mom: we already have yume 2kki explorer at home
+"Yume 2kki explorer" at home: https://4ejiobek1.github.io/SlopExplorer/
 
 # Yume 2kki Explorer
 
