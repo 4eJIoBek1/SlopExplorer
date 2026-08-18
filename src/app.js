@@ -854,12 +854,12 @@ function initBgmTrackData(data) {
         const hasIdAttribute = t.url ? ` data-id="true"` : '';
         const removedCollectableClass = t.removed ? ' removed-collectable' : '';
         const worldIdAttribute = t.worldId != null ? ` data-world-id="${t.worldId}"` : '';
-        const imageUrl = t.worldId != null ? worldData[t.worldId].images[t.worldImageOrdinal] : getMissingBgmTrackUrl(t.location);
+        const imageUrl = t.worldId != null ? (worldData[t.worldId].images[t.worldImageOrdinal] || hiddenWorldImageUrl) : getMissingBgmTrackUrl(t.location);
         const unnumberedAttribute = t.trackNo >= 1000 ? ' data-unnumbered="true"' : '';
         const removedAttribute = t.removed ? ' data-removed="true"' : '';
         const favButtonClass = config.bgmTrackInput.hasOwnProperty(t.id) ? config.bgmTrackInput[t.id] ? ' on' : ' inactive' : '';
         const ignoreButtonClass = config.bgmTrackInput.hasOwnProperty(t.id) ? !config.bgmTrackInput[t.id] ? ' on' : ' inactive' : '';
-        const bgmTrackImageHtml = `<div class="js--bgm-track-image--container bgm-track collectable-entry collectable${removedCollectableClass} noselect"><img src="${imageUrl}" class="js--bgm-track-image" /></div>`;
+        const bgmTrackImageHtml = `<div class="js--bgm-track-image--container bgm-track collectable-entry collectable${removedCollectableClass} noselect"><img src="${imageUrl}" onerror="this.onerror=null;this.src='./images/unknown.png'" class="js--bgm-track-image" /></div>`;
         const bgmTrackNameHtml = t.trackNo < 1000 ? `
             <div class="collectable-entry__name--container">
                 <h1 class="bgm-track__name--shadow collectable-entry__name--shadow">${trackId}</h1>
@@ -1146,7 +1146,7 @@ function initBgmTrackImagesModal($bgmTrackEntry, getBgmTrackImageContainer) {
     let i = 0;
 
     for (let bti of world.images) {
-        const bgmTrackImageImageHtml = `<div class="bgm-track-image collectable noselect"><img src="${bti}" /></div>`;
+        const bgmTrackImageImageHtml = `<div class="bgm-track-image collectable noselect"><img src="${bti}" onerror="this.onerror=null;this.src='./images/unknown.png'" /></div>`;
         const bgmTrackImageLinkHtml = `<a href="javascript:void(0);" class="js--bgm-track-image bgm-track-image collectable--border noselect" data-id="${i++}"></a>`;
         $(bgmTrackImageImageHtml).appendTo($bgmTrackImagesContainerItems);
         $(bgmTrackImageLinkHtml).appendTo($bgmTrackImagesContainerBorders);
@@ -1373,7 +1373,7 @@ function closeModals() {
 
 let updateTask;
 
-let staticMode = false;
+let staticMode = true;
 
 function buildStaticLocationData(data) {
     const locationNames = locationModeLocations.map(l => l.toLowerCase());
@@ -1544,7 +1544,7 @@ export function loadData(update, onSuccess, onFail) {
         if (urlSearchParams.has('trackedConnLocations'))
             queryString += `&trackedConnLocationNames=${urlSearchParams.get('trackedConnLocations')}`;
     }
-    const loadData = () => $.get(`/${locationMode ? 'locationData' : 'data'}${queryString}`).done(data => onSuccess(data)).fail(() => {
+    const fetchData = () => $.get(`/${locationMode ? 'locationData' : 'data'}${queryString}`).done(data => onSuccess(data)).fail(() => {
         if (update) {
             onFail();
             return;
@@ -1561,7 +1561,7 @@ export function loadData(update, onSuccess, onFail) {
                         $.post('/pollUpdate').done(res => {
                             if (res.done) {
                                 updateTask = null;
-                                loadData();
+                                fetchData();
                                 clearInterval(pollTimer)
                             } else if (res.task)
                                 updateTask = res.task;
@@ -1572,7 +1572,7 @@ export function loadData(update, onSuccess, onFail) {
                     }, 300);
                 }).fail(onFail);
         } else
-            loadData();
+            fetchData();
     };
     if (update)
         loadOrUpdateData(update);
@@ -1981,7 +1981,12 @@ function initGraph(renderMode, displayMode, paths) {
     });
 
     const images = (paths ? worldData.filter(w => visibleWorldIds.indexOf(w.id) > -1) : worldData).map(d => {
-        const img = imageLoader.load(!d.hidden ? d.filename : hiddenWorldImageUrl);
+        const img = imageLoader.load(!d.hidden ? d.filename : hiddenWorldImageUrl, undefined, undefined, () => {
+            imageLoader.load(hiddenWorldImageUrl, fallback => {
+                img.image = fallback.image;
+                img.needsUpdate = true;
+            }, undefined, () => { });
+        });
         img.id = d.id;
         img.rId = d.rId;
         img.title = !d.hidden ? getLocalizedLabel(d.title, d.titleJP) : localizedHiddenLabel;
@@ -4494,7 +4499,7 @@ function initBgm(url, label, imageUrl, worldId, play, playlistIndex, playlist) {
 }
 
 function initBgmTrack(bgmTrack, play, playlistIndex, playlist) {
-    const imageUrl = bgmTrack.worldId != null ? worldData[bgmTrack.worldId].images[bgmTrack.worldImageOrdinal] : getMissingBgmTrackUrl(bgmTrack.location);
+    const imageUrl = bgmTrack.worldId != null ? (worldData[bgmTrack.worldId].images[bgmTrack.worldImageOrdinal] || hiddenWorldImageUrl) : getMissingBgmTrackUrl(bgmTrack.location);
     initBgm(bgmTrack.url, getBgmTrackLabel(bgmTrack), imageUrl, bgmTrack.worldId, play, playlistIndex, playlist);
 }
 
@@ -4617,13 +4622,13 @@ function initPlaylist() {
 
 function addPlaylistBgmTrack(bgmTrackId, isInit) {
     const bgmTrack = bgmTrackIndexesById.hasOwnProperty(bgmTrackId) ? bgmTrackData[bgmTrackIndexesById[bgmTrackId]] : null;
-    const imageUrl = bgmTrack && bgmTrack.worldId != null ? worldData[bgmTrack.worldId].images[bgmTrack.worldImageOrdinal] : getMissingBgmTrackUrl(bgmTrack ? bgmTrack.location : null);
+    const imageUrl = bgmTrack && bgmTrack.worldId != null ? (worldData[bgmTrack.worldId].images[bgmTrack.worldImageOrdinal] || hiddenWorldImageUrl) : getMissingBgmTrackUrl(bgmTrack ? bgmTrack.location : null);
     const trackLabel = bgmTrack && bgmTrack.trackNo < 1000 ? bgmTrack.trackNo.toString().padStart(3, 0) + (bgmTrack.variant ? ` ${bgmTrack.variant}` : '') : '';
     const trackLabelHtml = trackLabel ? `<h2 class="playlist-item__label noselect">${trackLabel}</h2>` : '';
     const $playlistItem = $(`
         <div class="js--playlist-item playlist-item" data-bgm-track-id="${bgmTrackId}">
             <div class="playlist-item__image-container">
-                <img class="js--playlist-item__image playlist-item__image noselect" src="${imageUrl}" />
+                <img class="js--playlist-item__image playlist-item__image noselect" src="${imageUrl}" onerror="this.onerror=null;this.src='./images/unknown.png'" />
             </div>
             <a href="javascript:void(0);" class="js--remove-playlist-item playlist-item__remove-btn noselect">✖</a>
             ${trackLabelHtml}
