@@ -4,16 +4,16 @@
         <title data-localize="title">Yume 2kki Explorer</title>
         <meta content="Yume 2kki Explorer" property="og:title" />
         <meta content="A tool for visualizing and exploring the content of Yume 2kki" property="og:description" />
-        <link rel="shortcut icon" href="/favicon.ico">
-        <link rel="stylesheet" href="/css/index.css" />
+        <link rel="shortcut icon" href="favicon.ico">
+        <link rel="stylesheet" href="css/index.css" />
         <style class="js--theme-styles">
             body {
                 background-color: #000000; /*basebg*/
             }
 
             .y2e-controls, .modal, .audio-player-container {
-                background: url(/images/ui/Default_Custom/containerbg.png) !important;
-                border-image: url(/images/ui/Default_Custom/border.png) 12 repeat !important;
+                background: url(images/ui/Default_Custom/containerbg.png) !important;
+                border-image: url(images/ui/Default_Custom/border.png) 12 repeat !important;
                 background-size: 70px !important;
                 image-rendering: pixelated;
             }
@@ -50,20 +50,20 @@
             hr {
                 border: none;
                 border-top: 10px solid transparent;
-                border-image: url(/images/ui/Default_Custom/border.png) 12 repeat;
+                border-image: url(images/ui/Default_Custom/border.png) 12 repeat;
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
             }
 
             .modal__content::-webkit-scrollbar-track, .modal__controls--expand + .modal__controls::-webkit-scrollbar-track, .collectable-entry--content__list::-webkit-scrollbar-track, .playlist::-webkit-scrollbar-track {
-                border-image: url(/images/ui/Default_Custom/border.png) 12 repeat !important;
+                border-image: url(images/ui/Default_Custom/border.png) 12 repeat !important;
                 background-color: rgba(45, 17, 23, 1); /*basebg*/
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
             }
 
             .modal__content::-webkit-scrollbar-thumb, .modal__controls--expand + .modal__controls::-webkit-scrollbar-thumb, .collectable-entry--content__list::-webkit-scrollbar-thumb, .playlist::-webkit-scrollbar-thumb {
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round !important;
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
             }
@@ -75,7 +75,7 @@
 
             button, a:not(.no-border) {
                 color: rgba(216, 216, 216, 1); /*base*/
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round;
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
             }
@@ -86,16 +86,16 @@
             }
 
             a:not(.no-border):not(.button-link) {
-                background-image: url(/images/ui/Default_Custom/containerbg.png);
+                background-image: url(images/ui/Default_Custom/containerbg.png);
             }
 
             .collectables-container__borders > .effect {
-                border-image: url(/images/ui/Default_Custom/border.png) 12 round;
+                border-image: url(images/ui/Default_Custom/border.png) 12 round;
             }
 
             input[type='text'], select, .slider {
                 color: rgba(216, 216, 216, 1); /*base*/
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round;
                 background-color: rgba(45, 17, 23, 1) !important; /*basebg*/
                 text-shadow: 1.5px 1.5px black; /*shadow*/
                 image-rendering: crisp-edges;
@@ -115,14 +115,14 @@
             }
 
             .slider::-webkit-slider-thumb {
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round;
                 background-color: rgba(45, 17, 23, 1); /*basebg*/
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
             }
 
             .slider::-moz-range-thumb {
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round;
                 background-color: rgba(45, 17, 23, 1); /*basebg*/
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
@@ -131,43 +131,43 @@
             .controls-bottom--container--tab > .controls--container--tab__button,
             .controls-collectables--container--tab > .controls--container--tab__button,
             .controls-playlist--container--tab > .controls--container--tab__button {
-                background: url(/images/ui/Default_Custom/containerbg.png) !important;
-                border-image: url(/images/ui/Default_Custom/border.png) 8 repeat !important;
+                background: url(images/ui/Default_Custom/containerbg.png) !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 repeat !important;
                 border: 12px solid transparent;
             }
             
             .controls-bottom--container--tab > .controls--container--tab__button {
-                background: url(/images/ui/Default_Custom/containerbg.png) !important;
-                border-image: url(/images/ui/Default_Custom/border.png) 8 repeat !important;
+                background: url(images/ui/Default_Custom/containerbg.png) !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 repeat !important;
                 border: 12px solid transparent;
                 border-bottom: none;
             }
 
             .controls-collectables--container--tab > .controls--container--tab__button {
-                background: url(/images/ui/Default_Custom/containerbg.png) !important;
-                border-image: url(/images/ui/Default_Custom/border.png) 8 repeat !important;
+                background: url(images/ui/Default_Custom/containerbg.png) !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 repeat !important;
                 border: 12px solid transparent;
                 border-right: none;
             }
 
             .controls-playlist--container--tab > .controls--container--tab__button {
-                background: url(/images/ui/Default_Custom/containerbg.png) !important;
-                border-image: url(/images/ui/Default_Custom/border.png) 8 repeat !important;
+                background: url(images/ui/Default_Custom/containerbg.png) !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 repeat !important;
                 border: 12px solid transparent;
                 border-left: none;
             }
             
             .tab--up-arrow {
-                background-image: url(/images/ui/Default_Custom/arrowup.png);
+                background-image: url(images/ui/Default_Custom/arrowup.png);
             }
 
             .tab--down-arrow, .tab--left-arrow, .tab--right-arrow {
-                background-image: url(/images/ui/Default_Custom/arrowdown.png);
+                background-image: url(images/ui/Default_Custom/arrowdown.png);
             }
 
             .autocomplete-suggestions {
                 color: rgba(216, 216, 216, 1); /*base*/
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round;
                 background-color: rgba(45, 17, 23, 1); /*basebg*/
                 text-shadow: 1.5px 1.5px black; /*shadow*/
                 image-rendering: crisp-edges;
@@ -183,14 +183,14 @@
             }
 
             .context-menu-item, .graph-tooltip, .scene-tooltip:not(:empty), .collectable-entry--content {
-                border-image: url(/images/ui/Default_Custom/border.png) 8 round !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 round !important;
                 background-color: rgba(45, 17, 23, 1) !important; /*basebg*/
                 image-rendering: crisp-edges;
                 image-rendering: pixelated;
             }
 
             .context-menu-item, .graph-tooltip, .scene-tooltip:not(:empty) {
-                background-image: url(/images/ui/Default_Custom/containerbg.png) !important;
+                background-image: url(images/ui/Default_Custom/containerbg.png) !important;
                 color: rgba(216, 216, 216, 1) !important; /*base*/
                 text-shadow: 1.5px 1.5px black; /*shadow*/
             }
@@ -249,7 +249,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.0/jquery.contextMenu.min.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
-        <script src="/js/yume-2kki-explorer.js"></script>
+        <script src="js/yume-2kki-explorer.js"></script>
     </head>
     <body>
         <div class="content">

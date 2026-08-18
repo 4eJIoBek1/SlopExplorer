@@ -4,8 +4,8 @@
   "description": "A visualization of maps in Yume 2kki that scrapes the wiki for data",
   "main": "app.js",
   "dependencies": {
-    "3d-force-graph": "https://github.com/Flashfyre/3d-force-graph.git",
     "@tweenjs/tween.js": "^23.1.2",
+    "3d-force-graph": "https://github.com/Flashfyre/3d-force-graph.git",
     "d3-force": "^2.0.1",
     "d3-quadtree": "^1.0.7",
     "devbridge-autocomplete": "^1.4.11",
@@ -30,7 +30,8 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.19",
-    "esbuild": "^0.23.1"
+    "esbuild": "^0.23.1",
+    "undici": "^7.29.0"
   },
   "resolutions": {
     "3d-force-graph": "https://github.com/Flashfyre/3d-force-graph.git",

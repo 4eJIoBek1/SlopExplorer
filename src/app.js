@@ -719,7 +719,7 @@ function initMenuThemeData(data) {
             const worldIdAttribute = l.worldId != null ? ` data-id="${l.worldId}"` : '';
             const menuThemeImageHtml = `<div class="menu-theme collectable${removedCollectableClass} noselect"><img src="${m.filename}" /></div>`;
             const menuThemeLinkHtml = `<a href="javascript:void(0);" class="js--menu-theme menu-theme collectable--border noselect" data-location-id="${l.id}"${worldIdAttribute}></a>`;
-            l.method = l.method.replace(/<a .*?>(.*?)<\/ *a>/ig, '<span class="alt-highlight">$1</span>');
+            l.method = (l.method || '').replace(/<a .*?>(.*?)<\/ *a>/ig, '<span class="alt-highlight">$1</span>');
             if (l.methodJP)
                 l.methodJP = l.methodJP.replace(/<span .*?>(.*?)<\/ *span>/ig, '$1').replace(/<a .*?>(.*?)<\/ *a>/ig, '<span class="alt-highlight">$1</span>');
             $(menuThemeImageHtml).appendTo(l.removed ? $removedMenuThemesContainerItems : $menuThemesContainerItems);
@@ -777,7 +777,7 @@ function initWallpaperData(data) {
         const removedAttribute = wp.removed ? ' data-removed="true"' : '';
         const wallpaperImageHtml = `<div class="wallpaper collectable${censoredClass}${removedCollectableClass} noselect"><img src="${wp.filename}" /></div>`;
         const wallpaperLinkHtml = `<a href="javascript:void(0);" class="js--wallpaper wallpaper collectable--border noselect" data-wallpaper-id="${wp.id}"${worldIdAttribute}${removedAttribute}></a>`;
-        wp.method = wp.method.replace(/<a .*?>(.*?)<\/ *a>/ig, '<span class="alt-highlight">$1</span>');
+        wp.method = (wp.method || '').replace(/<a .*?>(.*?)<\/ *a>/ig, '<span class="alt-highlight">$1</span>');
         if (wp.methodJP)
             wp.methodJP = wp.methodJP.replace(/<span .*?>(.*?)<\/ *span>/ig, '$1').replace(/<a .*?>(.*?)<\/ *a>/ig, '<span class="alt-highlight">$1</span>');
         $(wallpaperImageHtml).appendTo(wp.removed ? $removedWallpapersContainerItems : $wallpapersContainerItems);
@@ -1373,7 +1373,156 @@ function closeModals() {
 
 let updateTask;
 
+let staticMode = false;
+
+function buildStaticLocationData(data) {
+    const locationNames = locationModeLocations.map(l => l.toLowerCase());
+    const hiddenConnLocationNames = (urlSearchParams.get('hiddenConnLocations') || '').toLowerCase().split('|').filter(l => l);
+    const trackedConnLocationNames = (urlSearchParams.get('trackedConnLocations') || '').toLowerCase().split('|').filter(l => l);
+    const fullWorlds = data.worldData;
+    const fullWorldsById = {};
+    for (let w of fullWorlds)
+        fullWorldsById[w.id] = w;
+
+    const getWorldFromRow = row => {
+        return {
+            id: row.id,
+            title: row.title,
+            titleJP: row.titleJP,
+            author: row.author,
+            depth: row.depth,
+            minDepth: row.minDepth,
+            filename: row.filename,
+            mapUrl: row.mapUrl,
+            mapLabel: row.mapLabel,
+            bgmUrl: row.bgmUrl,
+            bgmLabel: row.bgmLabel,
+            verAdded: row.verAdded,
+            verRemoved: row.verRemoved,
+            verUpdated: row.verUpdated,
+            verGaps: row.verGaps,
+            removed: !!row.removed,
+            connections: [],
+            images: [],
+            size: row.size || 1,
+            noMaps: true,
+            hidden: false,
+            secret: !!row.secret
+        };
+    };
+
+    const startWorldIds = [];
+    for (let w of fullWorlds) {
+        if (locationNames.indexOf(w.title.toLowerCase()) > -1)
+            startWorldIds.push(w.id);
+    }
+
+    const worldDataById = {};
+    for (let w of fullWorlds) {
+        if (startWorldIds.indexOf(w.id) > -1 && !w.removed)
+            worldDataById[w.id] = getWorldFromRow(w);
+    }
+
+    for (let w of fullWorlds) {
+        if (w.removed || !w.connections)
+            continue;
+        if (!w.connections.some(c => startWorldIds.indexOf(c.targetId) > -1))
+            continue;
+        const connWorld = getWorldFromRow(w);
+        if (hiddenConnLocationNames.indexOf(connWorld.title.toLowerCase()) > -1) {
+            if (connWorld.secret)
+                continue;
+            connWorld.hidden = true;
+        }
+        worldDataById[w.id] = connWorld;
+    }
+
+    const originalIds = Object.keys(worldDataById);
+    const originalToNewId = {};
+    originalIds.forEach((originalId, i) => originalToNewId[originalId] = i);
+
+    const worldData = Object.values(worldDataById);
+    for (let d in worldData) {
+        const world = worldData[d];
+        world.id = parseInt(d);
+        if (!world.author)
+            world.author = '';
+        if (typeof world.verUpdated === 'string')
+            world.verUpdated = versionUtils.parseVersionsUpdated(world.verUpdated);
+        if (typeof world.verGaps === 'string')
+            world.verGaps = versionUtils.parseVersionGaps(world.verGaps);
+    }
+
+    for (let w of fullWorlds) {
+        const sourceNewId = originalToNewId[w.id];
+        if (sourceNewId === undefined || !w.connections)
+            continue;
+        for (let conn of w.connections) {
+            if (conn.type & ConnType.INACCESSIBLE)
+                continue;
+            if (startWorldIds.indexOf(w.id) === -1 && startWorldIds.indexOf(conn.targetId) === -1)
+                continue;
+            const targetNewId = originalToNewId[conn.targetId];
+            if (targetNewId === undefined)
+                continue;
+            const newConn = {
+                targetId: targetNewId,
+                type: conn.type,
+                typeParams: conn.typeParams || {}
+            };
+            const targetWorld = worldData[targetNewId];
+            if (trackedConnLocationNames.indexOf(targetWorld.title.toLowerCase()) > -1)
+                newConn.type |= ConnType.TRACKED;
+            worldData[sourceNewId].connections.push(newConn);
+        }
+    }
+
+    const nonRemovedWorlds = fullWorlds.filter(w => !w.removed);
+    return {
+        worldData,
+        maxDepth: nonRemovedWorlds.length ? _.max(nonRemovedWorlds.map(w => w.depth)) : 0,
+        authorInfoData: data.authorInfoData,
+        versionInfoData: data.versionInfoData,
+        effectData: data.effectData,
+        menuThemeData: data.menuThemeData,
+        wallpaperData: data.wallpaperData,
+        bgmTrackData: data.bgmTrackData,
+        lastUpdate: data.lastUpdate,
+        lastFullUpdate: data.lastFullUpdate
+    };
+}
+
 export function loadData(update, onSuccess, onFail) {
+    const processData = data => {
+        const complete = () => {
+            if (staticMode)
+                onSuccess(data);
+            else
+                loadOrUpdateData(data.update);
+        };
+        if (document.fonts.check("12px MS Gothic")) {
+            fontsLoaded = true;
+            complete();
+        } else {
+            document.fonts.onloadingdone = _ => fontsLoaded = true;
+            const fontsLoadedCheck = window.setInterval(function () {
+                if (fontsLoaded) {
+                    window.clearInterval(fontsLoadedCheck);
+                    complete();
+                }
+            }, 100);
+        }
+    };
+    if (staticMode && !update) {
+        $.get('data/data.json').done(data => {
+            const staticData = locationMode ? buildStaticLocationData(data) : data;
+            if (staticData)
+                processData(staticData);
+            else
+                onFail();
+        }).fail(onFail);
+        return;
+    }
     let queryString = '';
     if (!locationMode) {
         if (config.removedContentMode === 1)
@@ -1387,7 +1536,14 @@ export function loadData(update, onSuccess, onFail) {
         if (urlSearchParams.has('trackedConnLocations'))
             queryString += `&trackedConnLocationNames=${urlSearchParams.get('trackedConnLocations')}`;
     }
-    const loadData = () => $.get(`/${locationMode ? 'locationData' : 'data'}${queryString}`).done(data => onSuccess(data)).fail(onFail);
+    const loadData = () => $.get(`/${locationMode ? 'locationData' : 'data'}${queryString}`).done(data => onSuccess(data)).fail(() => {
+        if (update) {
+            onFail();
+            return;
+        }
+        staticMode = true;
+        loadData(false, onSuccess, onFail);
+    });
     const loadOrUpdateData = update => {
         if (update) {
             const req = { reset: update === 'reset' };
@@ -1413,24 +1569,13 @@ export function loadData(update, onSuccess, onFail) {
     if (update)
         loadOrUpdateData(update);
     else {
-        const onSuccess = data => {
-            if (document.fonts.check("12px MS Gothic")) {
-                fontsLoaded = true;
-                loadOrUpdateData(data.update);
-            } else {
-                document.fonts.onloadingdone = _ => fontsLoaded = true;
-                const fontsLoadedCheck = window.setInterval(function () {
-                    if (fontsLoaded) {
-                        window.clearInterval(fontsLoadedCheck);
-                        loadOrUpdateData(data.update);
-                    }
-                }, 100);
-            }
-        };
         if (!locationMode)
-            $.post('/checkUpdateData').done(onSuccess).fail(onFail);
+            $.post('/checkUpdateData').done(processData).fail(() => {
+                staticMode = true;
+                loadData(false, onSuccess, onFail);
+            });
         else
-            onSuccess({ update: false });
+            processData({ update: false });
     }
 }
 
@@ -3672,7 +3817,7 @@ function initLocalization(isInitial) {
 
     $("[data-localize]").localize("ui", {
         language: config.lang,
-        pathPrefix: "/lang",
+        pathPrefix: "lang",
         callback: function (data, defaultCallback) {
             if (config.lang === 'ja' || config.lang === 'ru')
                 massageLocalizedValues(data, true);
@@ -3731,7 +3876,7 @@ function initLocalization(isInitial) {
 
     $.localize("conn", {
         language: config.lang,
-        pathPrefix: "/lang",
+        pathPrefix: "lang",
         callback: function (data) {
             localizedConns = data;
             if (config.lang === 'ja' || config.lang === 'ru')
@@ -3742,7 +3887,7 @@ function initLocalization(isInitial) {
     if (isInitial) {
         $.localize("effect", {
             language: 'ja',
-            pathPrefix: "/lang",
+            pathPrefix: "lang",
             callback: function (data) {
                 effectsJP = data;
             }
@@ -4917,7 +5062,7 @@ function initControls() {
             const bgColorPixel = uiThemeBgColors[config.uiTheme];
             const altColor = getColorRgba([Math.min(bgColorPixel[0] + 48, 255), Math.min(bgColorPixel[1] + 48, 255), Math.min(bgColorPixel[2] + 48, 255)]);
             getFontShadow(config.uiTheme, function (shadow) {
-                themeStyles.textContent = themeStyles.textContent.replace(/url\(\/images\/ui\/[a-zA-Z0-9\_]+\/(containerbg|border(?:2)?|arrow(?:up|down)|font\d)\.png\)/g, "url(/images/ui/" + config.uiTheme + "/$1.png)")
+                themeStyles.textContent = themeStyles.textContent.replace(/url\(\/images\/ui\/[a-zA-Z0-9\_]+\/(containerbg|border(?:2)?|arrow(?:up|down)|font\d)\.png\)/g, "url(images/ui/" + config.uiTheme + "/$1.png)")
                     .replace(/background-color:( *)[^;!]*(!important)?;( *)\/\*basebg\*\//g, "background-color:$1" + color + "$2;$3/*basebg*/")
                     .replace(/background-color:( *)[^;!]*(!important)?;( *)\/\*altbg\*\//g, "background-color:$1" + altColor + "$2;$3/*altbg*/")
                     .replace(/(?:[#a-zA-Z0-9]+|rgba\([0-9]+, [0-9]+, [0-9]+, [0-9]+\))(;? *)\/\*shadow\*\//g, shadow + "$1/*shadow*/");

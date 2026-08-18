@@ -2,6 +2,19 @@
 
 Yume 2kki Explorer is a web app that uses Force Graph to display all worlds from the game along with their connections with eachother. The data can be displayed in different ways and routes between any pair of worlds can be calculated and visualized. Data used in this app is automatically updated from the Yume 2kki Wiki every hour with an additional full data refresh once per week.
 
+## Static GitHub Pages Hosting
+
+This repository is set up to run as a fully static site on GitHub Pages, without the Node.js/MySQL backend. A GitHub Actions workflow (`.github/workflows/build-deploy.yml`) scrapes `wrapper.yume.wiki` for the world data (monthly, or manually via `workflow_dispatch`), commits the generated `public/data/data.json`, and deploys the site.
+
+Setup:
+
+1. In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**.
+2. Push to the default branch (or run the *Build and Deploy* workflow manually) to trigger the first build and deployment.
+
+The static build reads `data/data.json` as a fallback when the backend API endpoints are unavailable. World images are loaded from a fallback image proxy (`images.weserv.nl`) since the wiki blocks direct downloads; map/BGM assets hosted on the wiki itself load directly in the visitor's browser.
+
+Optional: to scrape through a SOCKS5 proxy (e.g. for machines that cannot reach the wiki directly), set the `SCRAPE_PROXY` repository secret, e.g. `socks5://127.0.0.1:10808`.
+
 ## Graph
 
 The graph will display worlds and their connections with icons attached to the connection links that show what type of connection the worlds have with eachother.
