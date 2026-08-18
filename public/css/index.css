@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'MS Gothic';
-    src: url('/fonts/MS Gothic.ttf');
+    src: url('../fonts/MS Gothic.ttf');
 }
 
 @font-face {
     font-family: 'MS Yahei';
-    src: url('/fonts/MS Yahei.ttf');
+    src: url('../fonts/MS Yahei.ttf');
 }
 
 @font-face {

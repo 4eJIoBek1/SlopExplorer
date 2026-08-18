@@ -114,8 +114,9 @@ dist
 config/db.config.js
 config/app.config.js
 
-# World images
-public/images/worlds/
+# Cloudflare clearance secrets (local image downloads)
+tools/.cf-secrets.json
 
 # Rollup Visualizer Stats
 stats.html
+

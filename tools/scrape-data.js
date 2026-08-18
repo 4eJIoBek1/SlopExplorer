@@ -13,11 +13,9 @@ const START_LOCATION = "Urotsuki's Room";
 const IMAGES_DIR = path.resolve(__dirname, "..", "public", "images", "worlds");
 const DATA_DIR = path.resolve(__dirname, "..", "public", "data");
 const DATA_FILE = path.join(DATA_DIR, "data.json");
-const WESERV_BASE = "https://images.weserv.nl/?url=";
 const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
 const maxLocations = process.env.SCRAPE_MAX_LOCATIONS ? parseInt(process.env.SCRAPE_MAX_LOCATIONS, 10) : null;
-const skipImages = process.env.SCRAPE_SKIP_IMAGES === "1";
 const proxyUrl = process.env.SCRAPE_PROXY;
 
 let fetchImpl = globalThis.fetch;
@@ -70,22 +68,6 @@ async function fetchPaged(endpoint, field) {
             break;
     } while (continueKey != null);
     return results;
-}
-
-async function downloadImage(imageUrl, destPath) {
-    const res = await fetchImpl(imageUrl, {
-        headers: { "User-Agent": USER_AGENT },
-        signal: AbortSignal.timeout(60000),
-        redirect: "follow"
-    });
-    if (!res.ok)
-        throw new Error(`HTTP ${res.status} for ${imageUrl}`);
-    const buffer = Buffer.from(await res.arrayBuffer());
-    fs.writeFileSync(destPath, buffer);
-}
-
-function getWeservUrl(imageUrl) {
-    return `${WESERV_BASE}${encodeURIComponent(imageUrl)}`;
 }
 
 function getWorldFilename(location) {
@@ -280,23 +262,11 @@ async function main() {
         const { localFilename, locationImage } = getWorldFilename(l);
         let filename;
         if (locationImage) {
-            if (!skipImages) {
-                const destPath = path.join(IMAGES_DIR, localFilename);
-                if (fs.existsSync(destPath))
-                    filename = `./images/worlds/${localFilename}`;
-                else {
-                    try {
-                        fs.mkdirSync(IMAGES_DIR, { recursive: true });
-                        await downloadImage(encodeURI(locationImage), destPath);
-                        console.log(`  saved image: ${localFilename}`);
-                        filename = `./images/worlds/${localFilename}`;
-                    } catch (err) {
-                        console.error(`  image download failed for ${localFilename}: ${err.message} - using weserv`);
-                        filename = getWeservUrl(encodeURI(locationImage));
-                    }
-                }
-            } else
-                filename = getWeservUrl(encodeURI(locationImage));
+            const destPath = path.join(IMAGES_DIR, localFilename);
+            if (fs.existsSync(destPath))
+                filename = `./images/worlds/${localFilename}`;
+            else
+                filename = locationImage;
         }
 
         const versionsUpdated = l.versionsUpdated || [];

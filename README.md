@@ -11,7 +11,7 @@ Setup:
 1. In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**.
 2. Push to the default branch (or run the *Build and Deploy* workflow manually) to trigger the first build and deployment.
 
-The static build reads `data/data.json` as a fallback when the backend API endpoints are unavailable. World images are loaded from a fallback image proxy (`images.weserv.nl`) since the wiki blocks direct downloads; map/BGM assets hosted on the wiki itself load directly in the visitor's browser.
+The static build reads `data/data.json` as a fallback when the backend API endpoints are unavailable. World images are loaded from the Yume 2kki Fandom mirror (`static.wikia.nocookie.net`), since the wiki itself blocks direct downloads; missing images fall back to a local placeholder. Map/BGM assets hosted on the wiki are only reachable in a browser that has passed the wiki's Cloudflare challenge.
 
 Optional: to scrape through a SOCKS5 proxy (e.g. for machines that cannot reach the wiki directly), set the `SCRAPE_PROXY` repository secret, e.g. `socks5://127.0.0.1:10808`.
 

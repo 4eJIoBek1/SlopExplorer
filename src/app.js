@@ -1506,11 +1506,19 @@ export function loadData(update, onSuccess, onFail) {
         } else {
             document.fonts.onloadingdone = _ => fontsLoaded = true;
             const fontsLoadedCheck = window.setInterval(function () {
-                if (fontsLoaded) {
+                if (fontsLoaded || document.fonts.check("12px MS Gothic")) {
+                    fontsLoaded = true;
                     window.clearInterval(fontsLoadedCheck);
                     complete();
                 }
             }, 100);
+            window.setTimeout(function () {
+                if (!fontsLoaded) {
+                    fontsLoaded = true;
+                    window.clearInterval(fontsLoadedCheck);
+                    complete();
+                }
+            }, 8000);
         }
     };
     if (staticMode && !update) {
@@ -2867,7 +2875,7 @@ function sortIconInstances(instanceObject, unsortedOpacities, unsortedGrayscales
 function initWorldTextures() {
     const amount = worldData.length;
     const filenames = [];
-    worldData.forEach(world => filenames.push(!world.hidden ? worldData[world.id].filename : hiddenWorldImageUrl));
+    worldData.forEach(world => filenames.push(!world.hidden ? (worldData[world.id].filename || hiddenWorldImageUrl) : hiddenWorldImageUrl));
 
     const dataLength = nodeImgDimensions.x * nodeImgDimensions.y * 4;
 
@@ -3259,15 +3267,19 @@ function getLocalizedBgmTrackLabel(localizedBgmTrackLabel) {
  * @param {Array} texturesSources - List of Strings that represent texture sources
  * @returns {Array} Array containing a Promise for each source 
  */
+let missingImageCanvas;
+
 function getImageRawData(imageSources) {
     return imageSources.map(imageSource => {
-        return new Promise((resolve, reject) => {
-            imageLoader.load(
-                imageSource,
-                image => resolve(image),
-                undefined, // onProgress callback not supported from r84
-                err => reject(err)
-            );
+        return new Promise(resolve => {
+            const resolveUnknown = () => {
+                imageLoader.load(hiddenWorldImageUrl, image => resolve(image), undefined, () => {
+                    if (!missingImageCanvas)
+                        missingImageCanvas = document.createElement('canvas');
+                    resolve(missingImageCanvas);
+                });
+            };
+            imageLoader.load(imageSource, image => resolve(image), undefined, err => resolveUnknown());
         });
     });
 }
