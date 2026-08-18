@@ -1,3 +1,5 @@
+https://4ejiobek1.github.io/SlopExplorer/
+
 # Yume 2kki Explorer
 
 Yume 2kki Explorer is a web app that uses Force Graph to display all worlds from the game along with their connections with eachother. The data can be displayed in different ways and routes between any pair of worlds can be calculated and visualized. Data used in this app is automatically updated from the Yume 2kki Wiki every hour with an additional full data refresh once per week.
