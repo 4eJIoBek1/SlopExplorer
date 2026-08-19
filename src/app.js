@@ -23,7 +23,7 @@ const urlSearchParams = new URLSearchParams(window.location.search);
 const locationMode = urlSearchParams.has('locations') && document.currentScript.src.split('?')[1].startsWith('locationMode=true');
 const locationModeLocations = locationMode ? urlSearchParams.get('locations').split('|') : undefined;
 
-const game = urlSearchParams.get('game') || '2kki';
+const game = urlSearchParams.get('game') || 'yumenikki';
 
 const hiddenWorldImageUrl = './images/unknown.png';
 

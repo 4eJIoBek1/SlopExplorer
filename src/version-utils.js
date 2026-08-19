@@ -26,9 +26,20 @@ const VersionEntryUpdateType = {
     REWORK: 'rw'
 };
 
-const versionPattern = /^(pre\-)?(\d+\.\d+)([a-z])?(?:[0-9])?(?: patch (\d+))?/;
-const versionUpdatedPattern = /^(pre\-)?(\d+\.\d+)([a-z])?(?:[0-9])?(?: patch (\d+))?(?:\-[a-z\-\+]{1,2})?/;
-const versionRangePattern = /^(pre\-)?(\d+\.\d+)([a-z])?(?:[0-9])?(?: patch (\d+))?\-(pre\-)?(\d+\.\d+)([a-z])?(?:[0-9])?(?: patch (\d+))?/;
+const versionPattern = /^(pre\-)?(\d+(?:\.\d+){1,2})([a-z])?(?:[0-9])?(?: patch (\d+))?/;
+const versionUpdatedPattern = /^(pre\-)?(\d+(?:\.\d+){1,2})([a-z])?(?:[0-9])?(?: patch (\d+))?(?:\-[a-z\-\+]{1,2})?/;
+const versionRangePattern = /^(pre\-)?(\d+(?:\.\d+){1,2})([a-z])?(?:[0-9])?(?: patch (\d+))?\-(pre\-)?(\d+(?:\.\d+){1,2})([a-z])?(?:[0-9])?(?: patch (\d+))?/;
+
+function compareVersionParts(parts1, parts2) {
+    const len = Math.max(parts1.length, parts2.length);
+    for (let i = 0; i < len; i++) {
+        const a = parts1[i] || 0;
+        const b = parts2[i] || 0;
+        if (a !== b)
+            return a < b ? -1 : 1;
+    }
+    return 0;
+}
 
 function compareVersionNames(v1, v2) {
     if (v1 === v2)
@@ -38,10 +49,9 @@ function compareVersionNames(v1, v2) {
     const match2 = v2.match(versionPattern);
 
     if (match1 != null && match2 != null) {
-        let verNum1 = parseFloat(match1[2]);
-        let verNum2 = parseFloat(match2[2]);
+        const verCmp = compareVersionParts(match1[2].split(".").map(Number), match2[2].split(".").map(Number));
 
-        if (verNum1 === verNum2) {
+        if (verCmp === 0) {
 
             let subVer1 = match1[3];
             let subVer2 = match2[3];
@@ -69,7 +79,7 @@ function compareVersionNames(v1, v2) {
             else if (patchVer1 != null)
                 return 1;
         } else
-            return verNum1 < verNum2 ? -1 : 1;
+            return verCmp;
         if (match1[1] !== undefined) {
             if (match2[1] === undefined)
                 return -1;

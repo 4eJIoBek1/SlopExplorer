@@ -7,17 +7,24 @@ const _ = require("lodash");
 const versionUtils = require("../src/version-utils");
 const wikiUtils = require("./wiki-utils");
 
-const GAME = "yumenikki";
-const CATEGORY = "Category:Yume Nikki Locations";
-const START_LOCATION = "Madotsuki's Room";
+const GAMES = {
+    yumenikki: {
+        category: "Category:Yume Nikki Locations",
+        startLocation: "Madotsuki's Room",
+        namespace: "Yume Nikki:"
+    },
+    collectiveunconscious: {
+        category: "Category:Collective Unconscious Locations",
+        startLocation: "Minnatsuki's Room",
+        namespace: "Collective Unconscious:"
+    }
+};
+
 const API_BASE = "https://yume.wiki/api.php";
-const IMAGES_DIR = path.resolve(__dirname, "..", "public", "images", GAME, "worlds");
-const DATA_DIR = path.resolve(__dirname, "..", "public", "data", GAME);
-const DATA_FILE = path.join(DATA_DIR, "data.json");
-const SECRETS_FILE = path.join(__dirname, ".cf-secrets.json");
 const PROXY = "socks5://127.0.0.1:10808";
 const THUMB_WIDTH = 320;
 const BATCH = 50;
+const SECRETS_FILE = path.join(__dirname, ".cf-secrets.json");
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -63,7 +70,7 @@ async function api(params, retries = 6) {
     return JSON.parse(text);
 }
 
-async function fetchCategoryMembers() {
+async function fetchCategoryMembers(category) {
     const titles = [];
     let continueKey;
     const seen = new Set();
@@ -72,13 +79,13 @@ async function fetchCategoryMembers() {
             break;
         if (continueKey != null)
             seen.add(continueKey);
-        const params = { action: "query", list: "categorymembers", cmtitle: CATEGORY, cmlimit: "500" };
+        const params = { action: "query", list: "categorymembers", cmtitle: category, cmlimit: "500" };
         if (continueKey)
             params.cmcontinue = continueKey;
         const data = await api(params);
         for (let m of data.query.categorymembers) {
             const t = m.title;
-            if (t.startsWith("Category:") || t === "Yume Nikki:List of Locations")
+            if (t.startsWith("Category:") || t.includes("List of Locations"))
                 continue;
             titles.push(t);
         }
@@ -90,8 +97,8 @@ async function fetchCategoryMembers() {
     return titles;
 }
 
-function stripNamespace(title) {
-    return title.replace(/^Yume Nikki:/, "");
+function stripNamespace(title, namespace) {
+    return title.startsWith(namespace) ? title.slice(namespace.length) : title;
 }
 
 async function fetchWikitext(titles) {
@@ -339,9 +346,15 @@ function sanitizeTitle(title) {
     return title.replace(/[\\/]/g, "");
 }
 
-async function main() {
+async function scrapeGame(gameKey) {
+    const cfg = GAMES[gameKey];
+    const imagesDir = path.resolve(__dirname, "..", "public", "images", gameKey, "worlds");
+    const dataDir = path.resolve(__dirname, "..", "public", "data", gameKey);
+    const dataFile = path.join(dataDir, "data.json");
+
+    console.log(`=== Scraping ${gameKey} (${cfg.category}) ===`);
     console.log("Fetching category members...");
-    const pageTitles = await fetchCategoryMembers();
+    const pageTitles = await fetchCategoryMembers(cfg.category);
     console.log(`  ${pageTitles.length} locations`);
 
     console.log("Fetching wikitext...");
@@ -361,7 +374,7 @@ async function main() {
             continue;
         }
         const { named } = parseTemplateArgs(found.inner);
-        const title = stripNamespace(fullTitle);
+        const title = stripNamespace(fullTitle, cfg.namespace);
 
         const mapInners = findAllTemplateInners(wt, "LocationMap");
         const mapFiles = [];
@@ -392,9 +405,13 @@ async function main() {
 
         const versionsUpdatedRaw = (named.VersionsUpdated || "").split(",").map(s => s.trim()).filter(Boolean);
 
+        const primaryRaw = (named.Primary || "").trim();
+        const author = primaryRaw.split(",").map(s => s.trim()).filter(Boolean).join(", ");
+
         worldsRaw.push({
             title,
             titleJP: named.JapaneseName || "",
+            author,
             image: (named.image || "").trim().replace(/^File:/, ""),
             mapFiles,
             mapCaptions,
@@ -402,6 +419,7 @@ async function main() {
             bgmLabels,
             connections: parseConnections(named.Connections).concat(parseConnections(named.RemovedConnections)),
             size,
+            hasMapId: Boolean(mapId),
             verAdded: (named.VersionAdded || "").trim() || null,
             verUpdated: versionsUpdatedRaw.length ? versionUtils.parseVersionsUpdated(versionsUpdatedRaw.join(",")) : null
         });
@@ -420,8 +438,8 @@ async function main() {
         return s ? s[0].toUpperCase() + s.slice(1) : s;
     };
 
-    console.log(`Downloading world images to ${IMAGES_DIR}...`);
-    fs.mkdirSync(IMAGES_DIR, { recursive: true });
+    console.log(`Downloading world images to ${imagesDir}...`);
+    fs.mkdirSync(imagesDir, { recursive: true });
     const worldData = [];
     let downloaded = 0;
     for (let raw of worldsRaw) {
@@ -429,13 +447,13 @@ async function main() {
         const localFilename = `${sanitizeTitle(raw.title)}${raw.image ? path.extname((fileUrls[imageName] || {}).url || raw.image) : ""}`;
         let filename;
         if (raw.image && fileUrls[imageName]) {
-            const destPath = path.join(IMAGES_DIR, localFilename);
+            const destPath = path.join(imagesDir, localFilename);
             if (!fs.existsSync(destPath)) {
                 if (await downloadFile(fileUrls[imageName].thumburl, destPath))
                     downloaded++;
             }
             if (fs.existsSync(destPath))
-                filename = `./images/${GAME}/worlds/${localFilename}`;
+                filename = `./images/${gameKey}/worlds/${localFilename}`;
             else
                 filename = fileUrls[imageName].thumburl;
         }
@@ -448,7 +466,7 @@ async function main() {
         worldData.push({
             title: raw.title,
             titleJP: raw.titleJP,
-            author: "",
+            author: raw.author,
             depth: 1,
             minDepth: 1,
             filename,
@@ -464,7 +482,7 @@ async function main() {
             connections: raw.connections.map(conn => wikiUtils.parseWorldConn(conn)),
             images: [],
             size: raw.size,
-            noMaps: true,
+            noMaps: !raw.hasMapId,
             hidden: false,
             secret: false
         });
@@ -502,17 +520,21 @@ async function main() {
         depthMap[world.title] = -1;
         minDepthMap[world.title] = -1;
     }
-    wikiUtils.calcDepth(worldData, worldDataById, depthMap, null, 0, wikiUtils.defaultPathIgnoreConnTypeFlags, "depth", null, false, START_LOCATION);
-    wikiUtils.calcDepth(worldData, worldDataById, minDepthMap, null, 0, wikiUtils.minDepthPathIgnoreConnTypeFlags, "minDepth", null, false, START_LOCATION);
+    wikiUtils.calcDepth(worldData, worldDataById, depthMap, null, 0, wikiUtils.defaultPathIgnoreConnTypeFlags, "depth", null, false, cfg.startLocation);
+    wikiUtils.calcDepth(worldData, worldDataById, minDepthMap, null, 0, wikiUtils.minDepthPathIgnoreConnTypeFlags, "minDepth", null, false, cfg.startLocation);
 
     console.log("Building version info...");
     const uniqueWorldVersionNames = versionUtils.getUniqueWorldVersionNames(worldData);
     const versionInfoData = uniqueWorldVersionNames.map(name => ({ name })).sort((vi1, vi2) => versionUtils.compareVersionNames(vi2.name, vi1.name));
 
+    console.log("Building author info...");
+    const authorNames = _.uniq(worldData.map(w => w.author).filter(Boolean));
+    const authorInfoData = authorNames.map(name => ({ name, nameJP: name }));
+
     const lastUpdate = new Date().toISOString();
     const data = {
         worldData,
-        authorInfoData: [],
+        authorInfoData,
         versionInfoData,
         effectData: [],
         menuThemeData: [],
@@ -523,9 +545,18 @@ async function main() {
         isAdmin: false
     };
 
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data));
-    console.log(`Wrote ${DATA_FILE} (${(fs.statSync(DATA_FILE).size / 1024).toFixed(1)} KB, ${worldData.length} worlds)`);
+    fs.mkdirSync(dataDir, { recursive: true });
+    fs.writeFileSync(dataFile, JSON.stringify(data));
+    console.log(`Wrote ${dataFile} (${(fs.statSync(dataFile).size / 1024).toFixed(1)} KB, ${worldData.length} worlds, ${authorInfoData.length} authors, ${versionInfoData.length} versions)`);
+}
+
+async function main() {
+    const gamesArg = process.argv.slice(2).map(a => a.replace(/^--?game[=:]?/, "")).filter(Boolean);
+    const targets = gamesArg.length ? gamesArg.filter(g => GAMES[g]) : Object.keys(GAMES);
+    for (let gameKey of targets) {
+        await scrapeGame(gameKey);
+    }
+    console.log("Done.");
 }
 
 if (require.main === module) {
@@ -544,5 +575,6 @@ module.exports = {
     parseConnections,
     api,
     fetchCategoryMembers,
-    stripNamespace
+    stripNamespace,
+    GAMES
 };
