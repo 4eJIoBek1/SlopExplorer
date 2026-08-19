@@ -1743,7 +1743,7 @@ function initGraph(renderMode, displayMode, paths) {
     if (paths) {
         const pathFinder = new PathFinder(worldData, isDebug, defaultPathIgnoreConnTypeFlags, false, effectsJP);
 
-        visibleWorldIds = _.uniq(_.flatten(paths).map(p => p.id));
+        visibleWorldIds = _.uniq(_.flatten(paths).map(p => p.id)).filter(id => config.removedContentMode === 1 || !worldRemoved[id]);
 
         const pathScores = [];
         let minPathDepth = paths[0].length - 2;
@@ -1794,6 +1794,8 @@ function initGraph(renderMode, displayMode, paths) {
             for (let w = 1; w < path.length; w++) {
                 const sourceId = path[w - 1].id;
                 const targetId = path[w].id;
+                if (config.removedContentMode !== 1 && (worldRemoved[sourceId] || worldRemoved[targetId]))
+                    continue;
                 const linkId = `${sourceId}_${targetId}`;
                 const hue = 0.6666 - ((pathScores[p] / maxPathScore) * 0.6666);
                 if (addedLinks.indexOf(linkId) === -1) {
@@ -1901,9 +1903,9 @@ function initGraph(renderMode, displayMode, paths) {
             }
         }
     } else {
-        visibleWorldIds = worldData.map(w => w.id);
+        visibleWorldIds = worldData.filter(w => config.removedContentMode === 1 || !w.removed).map(w => w.id);
 
-        maxDepth = maxWorldDepth || _.max(worldData.map(w => w.depth));
+        maxDepth = maxWorldDepth || _.max(worldData.filter(w => config.removedContentMode === 1 || !w.removed).map(w => w.depth));
 
         for (let w of visibleWorldIds) {
             const world = worldData[w];
@@ -1914,6 +1916,8 @@ function initGraph(renderMode, displayMode, paths) {
                 worldMinDepths[w] = world.minDepth;
             for (let conn of connections) {
                 const connWorld = worldData[conn.targetId];
+                if (config.removedContentMode !== 1 && connWorld.removed)
+                    continue;
                 let hidden = false;
                 if (conn.type & ConnType.NO_ENTRY)
                     hidden = true;
@@ -1980,7 +1984,7 @@ function initGraph(renderMode, displayMode, paths) {
             icons.push(getConnTypeIcon(ConnType.SEASONAL, l.typeParams[ConnType.SEASONAL]));
     });
 
-    const images = (paths ? worldData.filter(w => visibleWorldIds.indexOf(w.id) > -1) : worldData).map(d => {
+    const images = worldData.filter(d => visibleWorldIds.indexOf(d.id) > -1).map(d => {
         const img = imageLoader.load(!d.hidden ? d.filename : hiddenWorldImageUrl, undefined, undefined, () => {
             imageLoader.load(hiddenWorldImageUrl, fallback => {
                 img.image = fallback.image;
