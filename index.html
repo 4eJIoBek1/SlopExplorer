@@ -129,6 +129,7 @@
             }
 
             .controls-bottom--container--tab > .controls--container--tab__button,
+            .controls-top--container--tab > .controls--container--tab__button,
             .controls-collectables--container--tab > .controls--container--tab__button,
             .controls-playlist--container--tab > .controls--container--tab__button {
                 background: url(images/ui/Default_Custom/containerbg.png) !important;
@@ -141,6 +142,13 @@
                 border-image: url(images/ui/Default_Custom/border.png) 8 repeat !important;
                 border: 12px solid transparent;
                 border-bottom: none;
+            }
+
+            .controls-top--container--tab > .controls--container--tab__button {
+                background: url(images/ui/Default_Custom/containerbg.png) !important;
+                border-image: url(images/ui/Default_Custom/border.png) 8 repeat !important;
+                border: 12px solid transparent;
+                border-top: none;
             }
 
             .controls-collectables--container--tab > .controls--container--tab__button {
@@ -300,6 +308,11 @@
                         <button class="js--reset-data noselect">Emergency Data Reset</button>
                     </div>
                 </div>
+            </div>
+            <div class="controls--container--tab controls-top--container--tab" style="display: none;">
+                <button class="controls--container--tab__button controls-top--container--tab__button noselect">
+                    <a href="javascript:void(0);" class="tab--arrow tab--down-arrow no-border">&nbsp;</a>
+                </button>
             </div>
             <div id="graphContainer" class="graph-container">
                 <div id="graph" class="graph"></div>

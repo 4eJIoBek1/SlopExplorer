@@ -123,6 +123,15 @@ h1 {
     height: 92px;
 }
 
+.controls-top--container--tab {
+    position: absolute;
+    width: 144px;
+    z-index: 20;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 .controls-bottom--container--tab {
     position: absolute;
     width: 144px;
@@ -162,7 +171,8 @@ h1 {
     align-items: center;
 }
 
-.controls-bottom--container--tab > .controls--container--tab__button {
+.controls-bottom--container--tab > .controls--container--tab__button,
+.controls-top--container--tab > .controls--container--tab__button {
     flex-direction: column;
     width: calc(100% - 16px);
     height: 30px;
