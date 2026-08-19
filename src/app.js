@@ -23,6 +23,8 @@ const urlSearchParams = new URLSearchParams(window.location.search);
 const locationMode = urlSearchParams.has('locations') && document.currentScript.src.split('?')[1].startsWith('locationMode=true');
 const locationModeLocations = locationMode ? urlSearchParams.get('locations').split('|') : undefined;
 
+const game = urlSearchParams.get('game') || '2kki';
+
 const hiddenWorldImageUrl = './images/unknown.png';
 
 $(document).on("keydown", function (event) {
@@ -1522,7 +1524,7 @@ export function loadData(update, onSuccess, onFail) {
         }
     };
     if (staticMode && !update) {
-        $.get('data/data.json').done(data => {
+        $.get(`data/${game}/data.json`).done(data => {
             const staticData = locationMode ? buildStaticLocationData(data) : data;
             if (staticData)
                 processData(staticData);
@@ -5305,6 +5307,17 @@ function initControls() {
         if (worldData)
             reloadGraph();
     });
+
+    const $gameSelect = $(".js--game");
+    if ($gameSelect.length) {
+        $gameSelect.val(game);
+        $gameSelect.on("change", function () {
+            const newGame = $(this).val();
+            if (newGame === game)
+                return;
+            window.location.href = window.location.pathname + (urlSearchParams.has('adminKey') ? `?adminKey=${urlSearchParams.get('adminKey')}&game=${newGame}` : `?game=${newGame}`);
+        });
+    }
 
     $(".js--help").on("click", function () {
         if ($(".js--help-modal:visible").length)

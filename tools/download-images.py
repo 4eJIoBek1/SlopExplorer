@@ -11,7 +11,7 @@ import requests
 WRAPPER_BASE = "https://wrapper.yume.wiki"
 GAME = "2kki"
 PROBE_URL = "https://yume.wiki/images/0/02/3DStructures.png"
-IMAGES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "public", "images", "worlds"))
+IMAGES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "public", "images", GAME, "worlds"))
 SECRETS_FILE = os.path.join(os.path.dirname(__file__), ".cf-secrets.json")
 PROXY = "socks5://127.0.0.1:10808"
 THUMB_WIDTH = 320

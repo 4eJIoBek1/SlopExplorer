@@ -39,7 +39,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data/data.json
+          git add public/data/2kki/data.json
           git diff --cached --quiet || git commit -m "Update data via scrape [skip ci]"
           git push
 
