@@ -1,0 +1,1001 @@
+@font-face {
+    font-family: 'MS Gothic';
+    src: url('../fonts/MS Gothic.ttf');
+}
+
+@font-face {
+    font-family: 'MS Yahei';
+    src: url('../fonts/MS Yahei.ttf');
+}
+
+@font-face {
+    font-family: 'Verdana-Cyrillic';
+    src: local('Verdana');
+    size-adjust: 84%;
+    unicode-range: U+0400-04FF, U+0500-052F, U+2DE0-2DFF, U+A640-A69F;
+}
+
+body {
+    font-family: 'Verdana-Cyrillic', 'MS Gothic';
+    margin: 0;
+    background: url(https://img2.wikia.nocookie.net/__cb20140715140243/yume2kki/images/5/50/Wiki-background) top left repeat;
+    background-blend-mode: screen;
+    overflow: hidden;
+}
+
+html[lang='zh'] body {
+    font-family: 'MS Yahei';
+}
+
+h1 {
+    font-size: 36px;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.display--none {
+    display: none !important;
+}
+
+.jp-word-break {
+    white-space: nowrap;
+}
+
+.content {
+    background: rgba(0,0,0,0.8);
+    padding-top: 0.1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.controls--container {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.controls-bottom--container {
+    width: 100%;
+}
+
+.controls-collectables--container {
+    width: 160px;
+    left: 100%;
+    margin-top: 14px;
+}
+
+.controls-playlist--container {
+    display: flex;
+    justify-content: right;
+    margin-top: 14px;
+}
+
+.y2e-controls {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    text-align: right;
+    margin: 10px;
+    margin-top: 10px;
+    width: calc(100% - 40px);
+    min-height: 64px;
+    border: 10px solid transparent;
+}
+
+.controls__container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.controls-top {
+    display: block;
+    z-index: 10;
+}
+
+.controls-bottom, .controls-side {
+    pointer-events: none;
+}
+
+.y2e-controls.visible {
+    pointer-events: all !important;
+}
+
+.controls-side, .controls-side > .control, .controls-side > .control > button {
+    width: 100%;
+}
+
+.controls-side > .control {
+    padding: 0;
+}
+
+.controls-playlist {
+    display: flex;
+    align-content: center;
+    inline-size: max-content;
+    height: 92px;
+}
+
+.controls-top--container--tab {
+    position: fixed;
+    width: 144px;
+    z-index: 20;
+    top: 0;
+    left: calc(50% - 72px);
+}
+
+.controls-bottom--container--tab {
+    position: absolute;
+    width: 144px;
+    z-index: 5;
+    top: calc(100% - 36px);
+}
+
+.controls-side--container--tab {
+    position: absolute;
+    height: 100px;
+    z-index: 5;
+    margin-top: 16px;
+}
+
+.controls-collectables--container--tab {
+    top: calc(50% - 64px);
+    left: calc(100% - 36px);
+}
+
+.controls-playlist--container--tab {
+    bottom: calc(50% - 64px);
+    left: -12px;
+}
+
+.controls-collectables--container--tab > .controls--container--tab__button {
+    padding: 0;
+    margin-left: 0;
+}
+
+.controls-playlist--container--tab > .controls--container--tab__button {
+    padding: 0;
+    margin-right: 0;
+}
+
+.controls--container--tab__button, .collectable-entry--expand {
+    display: flex;
+    align-items: center;
+}
+
+.controls-bottom--container--tab > .controls--container--tab__button,
+.controls-top--container--tab > .controls--container--tab__button {
+    flex-direction: column;
+    width: calc(100% - 16px);
+    height: 30px;
+}
+
+.controls-side--container--tab > .controls--container--tab__button {
+    flex-direction: row;
+    height: calc(100% - 16px);
+}
+
+.control {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 8px;
+}
+
+.control.reverse-control {
+    flex-direction: row-reverse;
+}
+
+.loading-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-container .loading-container__text {
+    font-size: 36px;
+    margin-left: 12px;
+}
+
+.loading-container img {
+    z-index: 1;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    height: 25%;
+}
+
+.blocker {
+    overflow-y: hidden;
+    padding: 24px 24px 32px 24px !important;
+}
+
+.graph-container {
+    width: 100%;
+    height: 100%;
+}
+
+.graph {
+    width: 100%;
+    height: 100%;
+}
+
+.footer {
+    position: absolute;
+    padding: 8px;
+    padding-left: 4px;
+    top: calc(100% - 80px);
+    text-align: right;
+    height: 26px;
+    width: calc(100% - 16px);
+    font-size: 18px;
+}
+
+label {
+    font-size: 18px;
+    margin-left: 16px;
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: none;
+    padding-inline-start: 1em;
+}
+
+button {
+    margin: 8px;
+    padding: 4px;
+    cursor: pointer;
+    font-family: 'Verdana-Cyrillic', 'MS Gothic';
+    font-size: 18px;
+    border: 6px solid transparent;
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:not(.no-border) {
+    padding: 4px;
+    font-family: 'Verdana-Cyrillic', 'MS Gothic';
+    font-size: 18px;
+    border: 6px solid transparent;
+}
+
+a.icon-link {
+    -webkit-text-fill-color: white !important;
+}
+
+input[type='text'], select, .slider {
+    margin: 8px;
+    padding: 4px;
+    font-family: 'Verdana-Cyrillic', 'MS Gothic';
+    font-size: 18px;
+    border: 6px solid transparent;
+}
+
+html[lang='zh'] button, html[lang='zh'] a:not(.no-border), html[lang='zh'] input[type='text'], html[lang='zh'] select {
+    font-family: 'MS Yahei';
+}
+
+input[type='checkbox'].checkbox {
+    display: none;
+}
+
+.checkbox + .checkbox-button {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.checkbox + .checkbox-button > span:after {
+    content: ""
+}
+
+.checkbox:checked + .checkbox-button > span:after {
+    content: "✔"
+}
+
+select:not(.temp-select) > option.temp-select-only {
+    display: none;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 128px;
+    height: 2px;
+    padding: 0 4px;
+    outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 38px;
+    border: 6px solid transparent;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 24px;
+    height: 38px;
+    border: 6px solid transparent;
+    cursor: pointer;
+}
+
+.modal {
+    border: 10px solid transparent;
+    padding: 0 32px 24px 24px !important;
+    max-width: initial;
+    vertical-align: top !important;
+    height: 100%;
+    transition: height 0.25s;
+}
+
+.blocker {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.modal__content--container {
+    height: 100%;
+}
+
+.modal__content {
+    margin-right: -32px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: calc(100% + 24px);
+}
+
+.modal__content a:not(.no-border) {
+    display: inline-block;
+    margin-bottom: 24px;
+}
+
+.modal__content::-webkit-scrollbar, .modal__controls--expand + .modal__controls::-webkit-scrollbar, .collectable-entry--content__list::-webkit-scrollbar {
+    width: 18px;
+}
+
+.playlist::-webkit-scrollbar {
+    height: 18px;
+}
+
+.modal__content::-webkit-scrollbar-track {
+    margin-top: 24px;
+}
+
+.modal__content::-webkit-scrollbar-track, .modal__controls--expand + .modal__controls::-webkit-scrollbar-track, .collectable-entry--content__list::-webkit-scrollbar-track, .playlist:-webkit-scrollbar-track {
+    border: 10px solid transparent;
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.modal__content::-webkit-scrollbar-thumb, .modal__controls--expand + .modal__controls::-webkit-scrollbar-thumb, .collectable-entry--content__list::-webkit-scrollbar-thumb, .playlist::-webkit-scrollbar-thumb {
+    border: 6px solid transparent;
+}
+
+.modal__content::-webkit-scrollbar-button, .modal__controls--expand + .modal__controls::-webkit-scrollbar-button, .collectable-entry--content__list::-webkit-scrollbar-button {
+    height: 0px !important;
+}
+
+.playlist::-webkit-scrollbar-button {
+    width: 0px !important;
+}
+
+.modal__content--localized {
+    padding-bottom: 16px;
+}
+
+a.close-modal, a.close-audio-player {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-around;
+    text-decoration: none;
+    text-indent: initial !important;
+    padding: 5px;
+    margin: 0;
+    border: none;
+    top: -10px !important;
+    right: -10px !important;
+}
+
+a.close-modal {
+    padding-bottom: 0px;
+}
+
+.modal__controls {
+    display: flex;
+    flex-direction: column;
+    margin: 0 24px;
+}
+
+.modal__controls--expand {
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+.modal__controls--expand + .modal__controls {
+    overflow-y: auto;
+    max-height: 0;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.modal__controls--expand + .modal__controls.expanded {
+    max-height: 614px;
+}
+
+.collectables-container {
+    display: flex;
+    flex-wrap: nowrap;
+    margin: 24px;
+    width: calc(200% - 96px);
+}
+
+.collectables-container__items, .collectables-container__borders {
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.collectables-container__borders {
+    margin-left: -50%;
+}
+
+.collectable-entry--container {
+    display: flex;
+    margin-left: 22px;
+    transition: width 0.5s ease-in-out;
+}
+
+.collectable {
+    margin: 12px;
+    margin-bottom: 12px !important;
+    padding: 12px;
+    transition: margin-right 0.5s ease-in-out;
+}
+
+.collectable.expanded {
+    margin-right: 396px;
+}
+
+.version-entry {
+    margin-right: 26px;
+}
+
+.bgm-track.collectable {
+    margin-right: 118px;
+}
+
+.fav-bgm-track.collectable {
+    margin-right: 54px;
+}
+
+.collectable--border {
+    margin: 22px;
+    padding: 10px !important;
+    background-image: none !important;
+    border-width: 12px !important;
+    z-index: 1;
+}
+
+.collectable-entry--container > .collectable--border {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.collectable-entry--container > .collectable-entry--content {
+    width: 0;
+    height: 220px;
+    margin-top: 22px;
+    margin-bottom: 24px;
+    margin-left: -12px;
+    border: 12px solid transparent;
+    border-left: none;
+    transition: width 0.5s ease-in-out;
+}
+
+.collectable-entry--container > .collectable-entry--content > ul.collectable-entry--content__list {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding-left: 20px;
+}
+
+.collectable-entry--container > .collectable-entry--content > ul.collectable-entry--content__list > li {
+    padding: 4px;
+}
+
+.collectable-entry--container > .collectable-entry--content.expanded {
+    width: 368px;
+}
+
+.collectable-entry--container > .collectable-entry--content.expanded > ul.collectable-entry--content__list {
+    overflow-y: auto;
+}
+
+.collectable-entry--container > .collectable-entry--expand {
+    flex-direction: row;
+    width: 36px;
+    margin: 22px 0 24px 0;
+    padding: 2px;
+    border-width: 12px;
+    border-left: none;
+}
+
+.collectable-entry--container > .collectable-entry--controls {
+    display: flex;
+    flex-direction: column;
+    width: 64px;
+    margin: 22px 12px 24px -12px;
+    border-radius: 0px 8px 8px 0px;
+}
+
+.collectable-entry--container > .collectable-entry--controls > .collectable-entry--control {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    border-width: 12px;
+}
+
+.collectable-entry--container > .collectable-entry--controls + .collectable-entry--controls > .collectable-entry--control {
+    width: calc(100% - 12px);
+    border-left-width: 0px;
+}
+
+.collectable--border:not([data-id]), .collectable--border:not([data-id]) + .collectable-entry--controls > .collectable-entry--control:not(.bgm-track__set-image),
+    .collectable--border:not([data-id]) + .collectable-entry--controls + .collectable-entry--controls > .collectable-entry--control {
+    filter: grayscale(1);
+    cursor: default;
+}
+
+.collectable--border + .collectable-entry--controls > .collectable-entry--control.inactive {
+    filter: grayscale(1);
+    cursor: default;
+}
+
+.collectable-entry {
+    z-index: 1;
+}
+
+.collectable-entry > img {
+    width: 320px;
+    height: 240px;
+}
+
+.collectable-entry img {
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+.collectable-entry img.removed {
+    filter: grayscale(1);
+}
+
+.collectable-entry.hover img.removed {
+    filter: grayscale(0.625);
+}
+
+.collectable-entry > .collectable-entry__image-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 320px;
+}
+
+.collectable-entry > .collectable-entry__image-container--2 > img {
+    width: 160px;
+    height: 240px;
+    object-fit: cover;
+}
+
+.collectable-entry > .collectable-entry__image-container--3 > img {
+    width: 160px;
+    height: 120px;
+}
+
+.collectable-entry > .collectable-entry__image-container--3 > img:nth-child(3) {
+    width: 320px;
+    object-fit: cover;
+}
+
+.collectable-entry > .collectable-entry__image-container--4 > img {
+    width: 160px;
+    height: 120px;
+}
+
+.collectable-entry.collectable--border {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 280px;
+    width: 280px;
+    height: 200px;
+}
+
+.collectable-entry__name--container {
+    height: 100%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.collectable-entry__name, .collectable-entry__name--shadow {
+    font-family: 'Verdana-Cyrillic', 'MS Gothic';
+}
+
+.collectable-entry__name--shadow {
+    width: 0;
+    white-space: nowrap;
+    color: transparent;
+}
+
+.collectables-container__items > .effect {
+    margin: 20px;
+    margin-bottom: 20px !important;
+}
+
+.effect > img, .menu-theme > img, .wallpaper > img, .bgm-track > img, .bgm-track-image > img {
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+.effect > img {
+    clip-path: inset(6px);
+    width: 192px;
+    height: 192px;
+}
+
+.effect.collectable--border {
+    margin: 32px;
+    padding: 10px;
+    border-width: 24px !important;
+    min-width: 124px;
+    width: 124px;
+    height: 124px;
+}
+
+.menu-theme > img {
+    width: 200px;
+    height: 200px;
+}
+
+.menu-theme.collectable--border {
+    min-width: 160px;
+    width: 160px;
+    height: 160px;
+}
+
+.menu-themes__previous-methods-title > h2, .menu-themes__previous-methods-title > hr, .wallpapers__removed-title > h2, .wallpapers__removed-title > hr, .bgm-tracks__unnumbered-title > h2, .bgm-tracks__unnumbered-title > hr, .bgm-tracks__removed-title > h2, .bgm-tracks__removed-title > hr {
+    margin-left: 48px;
+    margin-right: 48px;
+}
+
+.wallpaper > img {
+    width: 320px;
+    height: 240px;
+}
+
+.wallpaper.censored:not(.hover) > img {
+    filter: blur(20px);
+    clip-path: inset(0px);
+}
+
+.wallpaper.collectable--border {
+    min-width: 280px;
+    width: 280px;
+    height: 200px;
+}
+
+.bgm-track > img {
+    width: 240px;
+    height: 180px;
+}
+
+.bgm-track.collectable--border {
+    min-width: 200px;
+    width: 200px;
+    height: 140px;
+}
+
+.bgm-track-image > img {
+    width: 240px;
+    height: 180px;
+}
+
+.bgm-track-image.collectable--border {
+    min-width: 200px;
+    width: 200px;
+    height: 140px;
+}
+
+.tab--arrow {
+    width: 32px;
+    height: 16px;
+    background-size: cover;
+}
+
+.tab--up-arrow {
+    margin-top: -6px;
+}
+
+.tab--right-arrow {
+    margin-right: -6px;
+    transform: rotate(-90deg);
+}
+
+.tab--down-arrow {
+    margin-bottom: -6px;
+}
+
+.tab--left-arrow {
+    margin-left: -6px;
+    transform: rotate(90deg);
+}
+
+.autocomplete-suggestions {
+    border: 6px solid transparent;
+    overflow: auto;
+}
+
+.autocomplete-suggestion {
+    padding: 2px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.autocomplete-suggestions strong {
+    font-weight: normal;
+}
+
+.autocomplete-group {
+    padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+    display: block;
+    border-bottom: 1px solid #000;
+}
+
+.graph-tooltip, .scene-tooltip {
+    font-family: 'Verdana-Cyrillic', 'MS Gothic' !important;
+    font-size: 16px !important;
+    padding: 4px;
+    border: 6px solid transparent;
+}
+
+html[lang='zh'] .graph-tooltip, html[lang='zh'] .scene-tooltip {
+    font-family: 'MS Yahei' !important;
+}
+
+.scene-nav-info {
+    display: none;
+}
+
+.node-label__value, .tooltip__value {
+    font-weight: bold;
+}
+
+.node-label__world, .effect-tooltip__effect, .effect-tooltip__location, .menu-theme-tooltip__world, .wallpaper-tooltip__wallpaper, .bgm-track-tooltip__bgm-track-id, .bgm-track-tooltip__name, .bgm-track-tooltip__location, .author-entry-tooltip__author, .version-entry-tooltip__version {
+    display: inline-block;
+    width: 100%;
+    padding-bottom: 0.5em;
+}
+
+.wallpaper-tooltip__wallpaper.alone, .bgm-track-tooltip__name.alone, .bgm-track-tooltip__location.alone {
+    padding-bottom: 0;
+}
+
+.node-label__world, .author-entry-tooltip__author, .author-entry-tooltip__version {
+    text-align: center;
+}
+
+.node-label__last-updated {
+    display: inline-flex;
+    flex-wrap: wrap;
+    flex-flow: column;
+}
+
+.node-label__last-updated__update-type {
+    text-align: right;
+}
+
+.effect-tooltip, .menu-theme-tooltip, .wallpaper-tooltip, .bgm-track-tooltip, .author-entry-tooltip, .version-entry-tooltip {
+    position: absolute;
+    max-width: 480px;
+    z-index: 3;
+}
+
+.context-menu-list {
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+.context-menu-item {
+    border: 6px solid transparent;
+}
+
+.audio-player-container {
+    position: absolute;
+    display: flex;
+    width: 694px;
+    margin-left: 10px;
+    top: calc(100% - 105px);
+    z-index: 11;
+}
+
+.audio-player-container.open {
+    border: 10px solid transparent;
+}
+
+.audio-player-image-container {
+    background-image: url(../images/title.png);
+    background-size: cover;
+    background-position-x: center;
+}
+
+.audio-player-image {
+    width: 72px;
+    height: 72px;
+    padding: 1px;
+    object-fit: cover;
+}
+
+.audio-player-marquee {
+    margin-left: 65px;
+    margin-right: 25px;
+}
+
+.audio-player-label {
+    image-rendering: auto;
+}
+
+.audio-player {
+    background: none !important;
+    width: 624px !important;
+}
+
+.audio-player .holder {
+    display: flex;
+    justify-content: space-between;
+}
+
+.audio-player .main-holder {
+    min-width: 166px;
+}
+
+.audio-player .left-holder {
+    height: 100%;
+    min-width: 24px;
+    margin-top: -16px;
+    margin-right: 16px;
+    flex-flow: column;
+}
+
+.audio-player .right-holder {
+    min-width: 64px;
+}
+
+.audio-player .main-holder .loading {
+    width: 18px;
+}
+
+.audio-player .main-holder .loading .loading__spinner {
+    margin-left: 74px;
+}
+
+.audio-player .holder .audio-player-playlist-btn:not(.inactive) {
+    cursor: pointer;
+}
+
+.audio-player .holder .audio-player-playlist-btn.inactive {
+    opacity: 0.5;
+}
+
+.audio-player .volume__controls.top {
+    background-color: transparent !important;
+}
+
+.close-audio-player, .playlist-item__remove-btn {
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+}
+
+.close-audio-player {
+    position: absolute;
+}
+
+.playlist-item__remove-btn {
+    border: none !important;
+    margin-left: calc(100% - 30px);
+    padding: 0 !important;
+}
+
+.playlist {
+    max-width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+
+.playlist-item {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 8px;
+    min-width: 96px;
+    height: 72px;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.playlist-item.playing {
+    border-style: solid;
+    border-width: 2px;
+    margin: 6px;
+}
+
+.playlist-item__image-container {
+    width: 0;
+    height: 0;
+}
+
+.playlist-item__image {
+    width: 96px;
+    height: 72px;
+}
+
+.playlist-item__label {
+    margin: 0;
+}
+
+.admin-only {
+    display: none;
+}
+
+.data-issues__container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 32px;
+}
+
+.data-issues-module {
+    padding: 0 24px 24px 0;
+}
+
+.version-update__sub-version-title, .version-update__patch-version-title {
+    display: flex;
+    margin: 1em 0;
+}
+
+.version-update__sub-version-title > h3 {
+    margin: 2px 0.5em 0 0;
+}
+
+.version-update__patch-version-title > h4 {
+    margin: 4px 0.5em 0 0;
+}
+
+.version-update__version__entry-edit input, .version-update__version__entry-edit select {
+    -webkit-text-fill-color: initial;
+}

@@ -17,6 +17,21 @@ const GAMES = {
         category: "Category:Collective Unconscious Locations",
         startLocation: "Minnatsuki's Room",
         namespace: "Collective Unconscious:"
+    },
+    unevendream: {
+        category: "Category:Uneven_Dream_Locations",
+        startLocation: "Kubotsuki's Room",
+        namespace: "Uneven Dream:"
+    },
+    flow: {
+        category: "Category:Dotflow_Locations",
+        startLocation: "Sabitsuki's Room",
+        namespace: "Dotflow:"
+    },
+    muma: {
+        category: "Category:Muma_Rope_Locations",
+        startLocation: "Bedroom",
+        namespace: "Muma Rope:"
     }
 };
 

@@ -4251,7 +4251,7 @@ function initContextMenu(localizedContextMenu) {
 
 function openWorldWikiPage(worldId, newWindow) {
     const world = worldData[worldId];
-    const wikiPath = game === '2kki' ? '2kki' : game === 'yumenikki' ? 'yume' : game === 'collectiveunconscious' ? 'unconscious' : '2kki';
+    const wikiPath = game === '2kki' ? '2kki' : game === 'yumenikki' ? 'yume' : game === 'collectiveunconscious' ? 'unconscious' : game === 'unevendream' ? 'unevendream' : game === 'flow' ? 'flow' : game === 'muma' ? 'muma' : '2kki';
     const wikiTitle = world.title.replace(/ /g, '_');
     let url;
     if (game === '2kki' && world.titleJP && !world.removed && !getLangUsesEn(config.lang)) {
