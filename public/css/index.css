@@ -124,12 +124,11 @@ h1 {
 }
 
 .controls-top--container--tab {
-    position: absolute;
+    position: fixed;
     width: 144px;
     z-index: 20;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: calc(50% - 72px);
 }
 
 .controls-bottom--container--tab {

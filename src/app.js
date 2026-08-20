@@ -1311,8 +1311,10 @@ function updateControlsContainer(updateTabMargin) {
         topControlsTabHeight = $tab.outerHeight();
         $tab.css("display", prevDisplay);
     }
-    const topControlsOffset = $(".controls-top").hasClass("visible") ? topControlsTabHeight : 0;
-    $(".controls-top").css("margin-top", `${(10 + topControlsOffset)}px`);
+    const topControlsVisible = $(".controls-top").hasClass("visible");
+    $(".controls-top").css("margin-top", "10px");
+    $(".controls-top--container--tab").css("margin-top", `${topControlsVisible ? (controlsHeight + 8) : 0}px`);
+    const topControlsOffset = topControlsVisible ? (controlsHeight + 8 + topControlsTabHeight) : topControlsTabHeight;
     const settingsHeight = $(".controls-bottom").outerHeight();
     const collectableControlsHeight = $(".controls-collectables").outerHeight();
     const collectableControlsWidth = $(".controls-collectables").outerWidth();
@@ -1322,12 +1324,12 @@ function updateControlsContainer(updateTabMargin) {
     });
     $(".controls-bottom--container--tab").css("left", `calc(50% - ${($(".controls-bottom--container--tab").outerWidth() / 2)}px`);
     $(".controls-collectables--container").css({
-        "top": `${(controlsHeight + topControlsOffset + 16)}px`,
+        "top": `${(topControlsOffset + 6)}px`,
         "margin-left": `-${(collectableControlsWidth + 20)}px`
     });
     $(".controls-collectables--container--tab").css({
         "width": `${collectableControlsWidth}px`,
-        "top": `${(controlsHeight + topControlsOffset + 16)}px`,
+        "top": `${(topControlsOffset + 6)}px`,
         "margin-top": `${16 + (((collectableControlsHeight + 16) - $(".controls-collectables--container--tab").outerHeight()) / 2)}px`
     });
     $(".controls-playlist").css("max-width", `${window.innerWidth - 72}px`);
@@ -1368,8 +1370,8 @@ function updateControlsContainer(updateTabMargin) {
     }
 
     $(".modal").css({
-        "margin-top": `${(controlsHeight + topControlsOffset + 16)}px`,
-        "height": `calc(100% - ${(controlsHeight + topControlsOffset + 16 + ($(".controls-bottom").hasClass("visible") ? settingsHeight + 8 : 0)) + ($(".controls-playlist").hasClass("visible") ? 200 : $(".audio-player-container").hasClass("open") ? 82 : 0)}px)`,
+        "margin-top": `${(topControlsOffset + 6)}px`,
+        "height": `calc(100% - ${(topControlsOffset + 6 + ($(".controls-bottom").hasClass("visible") ? settingsHeight + 8 : 0)) + ($(".controls-playlist").hasClass("visible") ? 200 : $(".audio-player-container").hasClass("open") ? 82 : 0)}px)`,
         "max-width": `${modalMaxWidth}px`,
         "margin-left": `${modalLeftMargin}px`,
         "margin-right": `${modalRightMargin}px`
@@ -5029,15 +5031,20 @@ function initControls() {
     $(".controls-top").addClass("visible");
     $(".controls-top--container--tab__button").on("click", function () {
         if ($(".controls-top").hasClass("visible")) {
+            const topControlsHeight = $(".controls-top").outerHeight() + 8;
             $(".controls-top").removeClass("visible").animateCss("slideOutUp", 250, function () {
                 if (!$(this).hasClass("visible"))
                     $(this).css({ "opacity": 0, "display": "none" });
                 updateControlsContainer();
             });
+            $(".controls-top--container--tab").css("margin-top", "0px").animateCss("slideOutUp", 250);
         } else {
-            $(".controls-top").addClass("visible").css({ "opacity": 1, "display": "block" }).animateCss("slideInDown", 250, function () {
+            $(".controls-top").addClass("visible").css({ "opacity": 1, "display": "block" });
+            const topControlsHeight = $(".controls-top").outerHeight() + 8;
+            $(".controls-top").animateCss("slideInDown", 250, function () {
                 updateControlsContainer();
             });
+            $(".controls-top--container--tab").css("margin-top", `${topControlsHeight}px`).animateCss("slideInDown", 250);
         }
     });
 
