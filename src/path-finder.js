@@ -263,7 +263,10 @@ class PathFinder {
 
     tryAddNexusPath(matchPaths, existingMatchPaths, sourceId, targetId) {
         const nexusWorldName = "Nexus";
-        const nexusWorldId = Object.values(this.worldData).find(w => w.title === nexusWorldName).id;
+        const nexusWorld = Object.values(this.worldData).find(w => w.title === nexusWorldName);
+        if (!nexusWorld)
+            return false;
+        const nexusWorldId = nexusWorld.id;
 
         if (sourceId !== nexusWorldId) {
             this.isDebug && console.log("Searching for paths eligible for Eyeball Bomb Nexus shortcut...");

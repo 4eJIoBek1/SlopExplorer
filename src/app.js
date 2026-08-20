@@ -1303,6 +1303,16 @@ function getUpdatedVersionDisplayToggles(value) {
 
 function updateControlsContainer(updateTabMargin) {
     const controlsHeight = $(".controls-top").outerHeight();
+    let topControlsTabHeight = $(".controls-top--container--tab").outerHeight();
+    if (!topControlsTabHeight) {
+        const $tab = $(".controls-top--container--tab");
+        const prevDisplay = $tab.css("display");
+        $tab.css("display", "block");
+        topControlsTabHeight = $tab.outerHeight();
+        $tab.css("display", prevDisplay);
+    }
+    const topControlsOffset = $(".controls-top").hasClass("visible") ? topControlsTabHeight : 0;
+    $(".controls-top").css("margin-top", `${(10 + topControlsOffset)}px`);
     const settingsHeight = $(".controls-bottom").outerHeight();
     const collectableControlsHeight = $(".controls-collectables").outerHeight();
     const collectableControlsWidth = $(".controls-collectables").outerWidth();
@@ -1312,12 +1322,12 @@ function updateControlsContainer(updateTabMargin) {
     });
     $(".controls-bottom--container--tab").css("left", `calc(50% - ${($(".controls-bottom--container--tab").outerWidth() / 2)}px`);
     $(".controls-collectables--container").css({
-        "top": `${(controlsHeight + 16)}px`,
+        "top": `${(controlsHeight + topControlsOffset + 16)}px`,
         "margin-left": `-${(collectableControlsWidth + 20)}px`
     });
     $(".controls-collectables--container--tab").css({
         "width": `${collectableControlsWidth}px`,
-        "top": `${(controlsHeight + 16)}px`,
+        "top": `${(controlsHeight + topControlsOffset + 16)}px`,
         "margin-top": `${16 + (((collectableControlsHeight + 16) - $(".controls-collectables--container--tab").outerHeight()) / 2)}px`
     });
     $(".controls-playlist").css("max-width", `${window.innerWidth - 72}px`);
@@ -1358,8 +1368,8 @@ function updateControlsContainer(updateTabMargin) {
     }
 
     $(".modal").css({
-        "margin-top": `${(controlsHeight + 16)}px`,
-        "height": `calc(100% - ${(controlsHeight + 16 + ($(".controls-bottom").hasClass("visible") ? settingsHeight + 8 : 0)) + ($(".controls-playlist").hasClass("visible") ? 200 : $(".audio-player-container").hasClass("open") ? 82 : 0)}px)`,
+        "margin-top": `${(controlsHeight + topControlsOffset + 16)}px`,
+        "height": `calc(100% - ${(controlsHeight + topControlsOffset + 16 + ($(".controls-bottom").hasClass("visible") ? settingsHeight + 8 : 0)) + ($(".controls-playlist").hasClass("visible") ? 200 : $(".audio-player-container").hasClass("open") ? 82 : 0)}px)`,
         "max-width": `${modalMaxWidth}px`,
         "margin-left": `${modalLeftMargin}px`,
         "margin-right": `${modalRightMargin}px`
@@ -1743,7 +1753,7 @@ function initGraph(renderMode, displayMode, paths) {
     let maxDepth;
 
     if (paths) {
-        const pathFinder = new PathFinder(worldData, isDebug, defaultPathIgnoreConnTypeFlags, false, effectsJP);
+        const pathFinder = new PathFinder(worldData, isDebug, defaultPathIgnoreConnTypeFlags, game !== '2kki', effectsJP);
 
         visibleWorldIds = _.uniq(_.flatten(paths).map(p => p.id)).filter(id => config.removedContentMode === 1 || !worldRemoved[id]);
 
@@ -3796,7 +3806,7 @@ function tempSelectVersion(versionIndex, ignoreChange) {
 function reloadGraph() {
     tempSelectAuthor(null, true);
     tempSelectVersion(0, true);
-    const pathFinder = new PathFinder(worldData, isDebug, defaultPathIgnoreConnTypeFlags, false, effectsJP);
+    const pathFinder = new PathFinder(worldData, isDebug, defaultPathIgnoreConnTypeFlags, game !== '2kki', effectsJP);
     const startWorld = startWorldId != null ? worldData[startWorldId] : null;
     const endWorld = endWorldId != null ? worldData[endWorldId] : null;
     const matchPaths = startWorld && endWorld && startWorld != endWorld
@@ -4239,10 +4249,15 @@ function initContextMenu(localizedContextMenu) {
 
 function openWorldWikiPage(worldId, newWindow) {
     const world = worldData[worldId];
-    window.open(!world.titleJP || world.removed || getLangUsesEn(config.lang)
-        ? 'https://yume.wiki/2kki/' + world.title
-        : ('https://wikiwiki.jp/yume2kki-t/' + (world.titleJP.indexOf("：") > -1 ? world.titleJP.slice(0, world.titleJP.indexOf("：")) : world.titleJP)),
-        "_blank", newWindow ? "width=" + window.outerWidth + ",height=" + window.outerHeight : "");
+    const wikiPath = game === '2kki' ? '2kki' : game === 'yumenikki' ? 'yume' : game === 'collectiveunconscious' ? 'unconscious' : '2kki';
+    const wikiTitle = world.title.replace(/ /g, '_');
+    let url;
+    if (game === '2kki' && world.titleJP && !world.removed && !getLangUsesEn(config.lang)) {
+        url = 'https://wikiwiki.jp/yume2kki-t/' + (world.titleJP.indexOf("：") > -1 ? world.titleJP.slice(0, world.titleJP.indexOf("：")) : world.titleJP);
+    } else {
+        url = 'https://yume.wiki/' + wikiPath + '/' + wikiTitle;
+    }
+    window.open(url, "_blank", newWindow ? "width=" + window.outerWidth + ",height=" + window.outerHeight : "");
 }
 
 function initBgm(url, label, imageUrl, worldId, play, playlistIndex, playlist) {
@@ -5017,11 +5032,13 @@ function initControls() {
             $(".controls-top").removeClass("visible").animateCss("slideOutUp", 250, function () {
                 if (!$(this).hasClass("visible"))
                     $(this).css({ "opacity": 0, "display": "none" });
+                updateControlsContainer();
             });
         } else {
-            $(".controls-top").addClass("visible").css({ "opacity": 1, "display": "block" }).animateCss("slideInDown", 250);
+            $(".controls-top").addClass("visible").css({ "opacity": 1, "display": "block" }).animateCss("slideInDown", 250, function () {
+                updateControlsContainer();
+            });
         }
-        updateControlsContainer();
     });
 
     updateControlsContainer(true);
