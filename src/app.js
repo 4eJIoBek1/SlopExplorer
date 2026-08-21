@@ -1974,30 +1974,6 @@ function initGraph(renderMode, displayMode, paths) {
         }
     }
 
-    // Uneven Dream exclusive depth rules: both dream rooms at depth 1, both nexuses at depth 2
-    if (game === 'unevendream') {
-        const applyDepth = (title, depth) => {
-            const w = worldData.find(x => x.title === title);
-            if (w) {
-                const id = w.id;
-                worldDepths[id] = depth;
-                worldMinDepths[id] = depth;
-                w.depth = depth;
-                w.minDepth = depth;
-            }
-        };
-        applyDepth("Totsutsuki's Dream Room", 1);
-        applyDepth("Kubotsuki's Dream Room", 1);
-        applyDepth("Totsutsuki's Nexus", 2);
-        applyDepth("Kubotsuki's Nexus", 2);
-        // recalc maxDepth after override
-        const depthValues = Object.values(worldDepths);
-        if (depthValues.length) {
-            const recalcMax = _.max(depthValues);
-            if (recalcMax !== undefined) maxDepth = recalcMax;
-        }
-    }
-
     initWorldSearch();
 
     links.forEach(l => {

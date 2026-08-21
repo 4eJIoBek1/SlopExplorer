@@ -1694,25 +1694,6 @@ function updateWorldDepths(pool, worldData) {
         calcDepth(worldData, worldDataById, depthMap, null, 0, defaultPathIgnoreConnTypeFlags, 'depth');
         calcDepth(worldData, worldDataById, minDepthMap, null, 0, minDepthPathIgnoreConnTypeFlags, 'minDepth');
 
-        // Uneven Dream exclusive depth rules: both dream rooms at depth 1, both nexuses at depth 2
-        // Apply after calc but before grouping so DB stores correct depths
-        const isUnevenDream = worldData.some(w => w.title === "Kubotsuki's Dream Room" || w.title === "Totsutsuki's Dream Room");
-        if (isUnevenDream) {
-            const applyExclusiveDepth = (title, depth) => {
-                const w = worldData.find(x => x.title === title);
-                if (w) {
-                    w.depth = depth;
-                    w.minDepth = depth;
-                    depthMap[title] = depth;
-                    minDepthMap[title] = depth;
-                }
-            };
-            applyExclusiveDepth("Totsutsuki's Dream Room", 1);
-            applyExclusiveDepth("Kubotsuki's Dream Room", 1);
-            applyExclusiveDepth("Totsutsuki's Nexus", 2);
-            applyExclusiveDepth("Kubotsuki's Nexus", 2);
-        }
-
         const worldsByDepth = _.groupBy(worldData, 'depth');
         const worldsByMinDepth = _.groupBy(worldData, 'minDepth');
 
