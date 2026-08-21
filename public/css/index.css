@@ -129,6 +129,7 @@ h1 {
     z-index: 20;
     top: 0;
     left: calc(50% - 72px);
+    transition: margin-top 0.25s ease-out;
 }
 
 .controls-bottom--container--tab {

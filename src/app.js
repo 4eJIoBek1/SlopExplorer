@@ -1810,6 +1810,13 @@ function initGraph(renderMode, displayMode, paths) {
                 const targetId = path[w].id;
                 if (config.removedContentMode !== 1 && (worldRemoved[sourceId] || worldRemoved[targetId]))
                     continue;
+                // Muma Rope exclusive: don't draw chance connections for R-Maze
+                if (game === 'muma' && (path[w - 1].connType & ConnType.CHANCE)) {
+                    const srcTitle = worldData[sourceId]?.title;
+                    const tgtTitle = worldData[targetId]?.title;
+                    if (srcTitle === 'R-Maze' || tgtTitle === 'R-Maze')
+                        continue;
+                }
                 const linkId = `${sourceId}_${targetId}`;
                 const hue = 0.6666 - ((pathScores[p] / maxPathScore) * 0.6666);
                 if (addedLinks.indexOf(linkId) === -1) {
@@ -1864,6 +1871,9 @@ function initGraph(renderMode, displayMode, paths) {
                 }]);
             }
             for (let conn of connections) {
+                const connWorldForCheck = worldData[conn.targetId];
+                if (game === 'muma' && (conn.type & ConnType.CHANCE) && connWorldForCheck && (world.title === 'R-Maze' || connWorldForCheck.title === 'R-Maze'))
+                    continue;
                 const linkId = `${w}_${conn.targetId}`;
                 if (addedLinks.indexOf(linkId) === -1)
                     continue;
@@ -1930,6 +1940,8 @@ function initGraph(renderMode, displayMode, paths) {
                 worldMinDepths[w] = world.minDepth;
             for (let conn of connections) {
                 const connWorld = worldData[conn.targetId];
+                if (game === 'muma' && (conn.type & ConnType.CHANCE) && (world.title === 'R-Maze' || connWorld.title === 'R-Maze'))
+                    continue;
                 if (config.removedContentMode !== 1 && connWorld.removed)
                     continue;
                 let hidden = false;
@@ -1959,6 +1971,30 @@ function initGraph(renderMode, displayMode, paths) {
                 };
                 links.push(link);
             }
+        }
+    }
+
+    // Uneven Dream exclusive depth rules: both dream rooms at depth 1, both nexuses at depth 2
+    if (game === 'unevendream') {
+        const applyDepth = (title, depth) => {
+            const w = worldData.find(x => x.title === title);
+            if (w) {
+                const id = w.id;
+                worldDepths[id] = depth;
+                worldMinDepths[id] = depth;
+                w.depth = depth;
+                w.minDepth = depth;
+            }
+        };
+        applyDepth("Totsutsuki's Dream Room", 1);
+        applyDepth("Kubotsuki's Dream Room", 1);
+        applyDepth("Totsutsuki's Nexus", 2);
+        applyDepth("Kubotsuki's Nexus", 2);
+        // recalc maxDepth after override
+        const depthValues = Object.values(worldDepths);
+        if (depthValues.length) {
+            const recalcMax = _.max(depthValues);
+            if (recalcMax !== undefined) maxDepth = recalcMax;
         }
     }
 
@@ -5037,14 +5073,14 @@ function initControls() {
                     $(this).css({ "opacity": 0, "display": "none" });
                 updateControlsContainer();
             });
-            $(".controls-top--container--tab").css("margin-top", "0px").animateCss("slideOutUp", 250);
+            $(".controls-top--container--tab").css("margin-top", "0px");
         } else {
             $(".controls-top").addClass("visible").css({ "opacity": 1, "display": "block" });
             const topControlsHeight = $(".controls-top").outerHeight() + 8;
             $(".controls-top").animateCss("slideInDown", 250, function () {
                 updateControlsContainer();
             });
-            $(".controls-top--container--tab").css("margin-top", `${topControlsHeight}px`).animateCss("slideInDown", 250);
+            $(".controls-top--container--tab").css("margin-top", `${topControlsHeight}px`);
         }
     });
 
