@@ -144,7 +144,7 @@ h1 {
     z-index: 5;
     top: 100%;
     left: calc(50% - 72px);
-    margin-top: -10px;
+    margin-top: -8px;
     pointer-events: all;
 }
 
