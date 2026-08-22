@@ -95,9 +95,24 @@ h1 {
     justify-content: flex-end;
 }
 
+.controls-top-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 20;
+    pointer-events: none;
+}
+
 .controls-top {
     display: block;
     z-index: 10;
+    position: relative;
+    transition: transform 0.25s ease-out;
+}
+
+.controls-top:not(.visible) {
+    transform: translateY(-100%);
 }
 
 .controls-bottom, .controls-side {
@@ -124,12 +139,13 @@ h1 {
 }
 
 .controls-top--container--tab {
-    position: fixed;
+    position: absolute;
     width: 144px;
-    z-index: 20;
-    top: 0;
+    z-index: 5;
+    top: 100%;
     left: calc(50% - 72px);
-    transition: margin-top 0.25s ease-out;
+    margin-top: -10px;
+    pointer-events: all;
 }
 
 .controls-bottom--container--tab {

@@ -261,61 +261,63 @@
     </head>
     <body>
         <div class="content">
-            <div class="y2e-controls controls-top">
-                <div class="controls__container">
-                    <div class="control">
-                        <label data-localize="controls.search.name" class="noselect">Search:</label>
-                        <input name="searchWorld" type="text" class="js--world-input js--search-world" />
+            <div class="controls-top-wrapper">
+                <div class="y2e-controls controls-top">
+                    <div class="controls__container">
+                        <div class="control">
+                            <label data-localize="controls.search.name" class="noselect">Search:</label>
+                            <input name="searchWorld" type="text" class="js--world-input js--search-world" />
+                        </div>
+                        <div class="control">
+                            <label class="noselect">Game:</label>
+                            <select name="game" class="js--game">
+                                <option value="yumenikki">Yume Nikki</option>
+                                <option value="2kki">Yume 2kki</option>
+                                <option value="collectiveunconscious">Collective Unconscious</option>
+                                <option value="unevendream">Uneven Dream</option>
+                                <option value="flow">.flow</option>
+                                <option value="muma">Muma Rope</option>
+                            </select>
+                        </div>
+                        <div class="control reverse-control">
+                            <select name="author" class="js--author">
+                                <option data-localize="controls.author.values.null" value="null">All</option>
+                            </select>
+                            <label data-localize="controls.author.name" class="noselect">Author:</label>
+                        </div>
+                        <div class="control reverse-control">
+                            <select name="version" class="js--version">
+                                <option data-localize="controls.version.values.0" value="0">All</option>
+                            </select>
+                            <label data-localize="controls.version.name" class="noselect">Version:</label>
+                        </div>
+                        <div class="control">
+                            <label data-localize="controls.origin.name" class="noselect">Origin:</label>
+                            <input name="startWorld" type="text" class="js--world-input js--path--world-input js--start-world" />
+                        </div>
+                        <div class="control">
+                            <label data-localize="controls.destination.name" class="noselect">Destination:</label>
+                            <input name="endWorld" type="text" class="js--world-input js--path--world-input js--end-world" />
+                        </div>
+                        <div class="control">
+                            <button data-localize="controls.reset.name" class="js--reset noselect">Reset</button>
+                            <button data-localize="controls.help.name" class="js--help noselect">Help</button>
+                        </div>
                     </div>
-                    <div class="control">
-                        <label class="noselect">Game:</label>
-                        <select name="game" class="js--game">
-                            <option value="yumenikki">Yume Nikki</option>
-                            <option value="2kki">Yume 2kki</option>
-                            <option value="collectiveunconscious">Collective Unconscious</option>
-                            <option value="unevendream">Uneven Dream</option>
-                            <option value="flow">.flow</option>
-                            <option value="muma">Muma Rope</option>
-                        </select>
+                    <div class="admin-controls controls__container admin-only">
+                        <div class="control">
+                            <button class="js--check-data-issues noselect">Check for Data Issues</button>
+                            <button class="js--version-update noselect">Manage Versions</button>
+                            <button class="js--update-data noselect">Update Data</button>
+                            <button class="js--reset-data noselect">Emergency Data Reset</button>
+                        </div>
                     </div>
-                    <div class="control reverse-control">
-                        <select name="author" class="js--author">
-                            <option data-localize="controls.author.values.null" value="null">All</option>
-                        </select>
-                        <label data-localize="controls.author.name" class="noselect">Author:</label>
-                    </div>
-                    <div class="control reverse-control">
-                        <select name="version" class="js--version">
-                            <option data-localize="controls.version.values.0" value="0">All</option>
-                        </select>
-                        <label data-localize="controls.version.name" class="noselect">Version:</label>
-                    </div>
-                    <div class="control">
-                        <label data-localize="controls.origin.name" class="noselect">Origin:</label>
-                        <input name="startWorld" type="text" class="js--world-input js--path--world-input js--start-world" />
-                    </div>
-                    <div class="control">
-                        <label data-localize="controls.destination.name" class="noselect">Destination:</label>
-                        <input name="endWorld" type="text" class="js--world-input js--path--world-input js--end-world" />
-                    </div>
-                    <div class="control">
-                        <button data-localize="controls.reset.name" class="js--reset noselect">Reset</button>
-                        <button data-localize="controls.help.name" class="js--help noselect">Help</button>
+                    <div class="controls--container--tab controls-top--container--tab" style="display: none;">
+                        <button class="controls--container--tab__button controls-top--container--tab__button noselect">
+                            <a href="javascript:void(0);" class="tab--arrow tab--down-arrow no-border">&nbsp;</a>
+                        </button>
                     </div>
                 </div>
-                <div class="admin-controls controls__container admin-only">
-                    <div class="control">
-                        <button class="js--check-data-issues noselect">Check for Data Issues</button>
-                        <button class="js--version-update noselect">Manage Versions</button>
-                        <button class="js--update-data noselect">Update Data</button>
-                        <button class="js--reset-data noselect">Emergency Data Reset</button>
-                    </div>
-                </div>
-            </div>
-            <div class="controls--container--tab controls-top--container--tab" style="display: none;">
-                <button class="controls--container--tab__button controls-top--container--tab__button noselect">
-                    <a href="javascript:void(0);" class="tab--arrow tab--down-arrow no-border">&nbsp;</a>
-                </button>
             </div>
             <div id="graphContainer" class="graph-container">
                 <div id="graph" class="graph"></div>

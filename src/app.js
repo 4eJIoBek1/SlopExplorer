@@ -1313,8 +1313,7 @@ function updateControlsContainer(updateTabMargin) {
     }
     const topControlsVisible = $(".controls-top").hasClass("visible");
     $(".controls-top").css("margin-top", "10px");
-    $(".controls-top--container--tab").css("margin-top", `${topControlsVisible ? (controlsHeight + 8) : 0}px`);
-    const topControlsOffset = topControlsVisible ? (controlsHeight + 8 + topControlsTabHeight) : topControlsTabHeight;
+    const topControlsOffset = topControlsVisible ? (controlsHeight + topControlsTabHeight) : topControlsTabHeight;
     const settingsHeight = $(".controls-bottom").outerHeight();
     const collectableControlsHeight = $(".controls-collectables").outerHeight();
     const collectableControlsWidth = $(".controls-collectables").outerWidth();
@@ -5041,23 +5040,10 @@ function initControls() {
     });
 
     $(".controls-top").addClass("visible");
+    document.querySelector(".controls-top--container--tab").style.display = '';
     $(".controls-top--container--tab__button").on("click", function () {
-        if ($(".controls-top").hasClass("visible")) {
-            const topControlsHeight = $(".controls-top").outerHeight() + 8;
-            $(".controls-top").removeClass("visible").animateCss("slideOutUp", 250, function () {
-                if (!$(this).hasClass("visible"))
-                    $(this).css({ "opacity": 0, "display": "none" });
-                updateControlsContainer();
-            });
-            $(".controls-top--container--tab").css("margin-top", "0px");
-        } else {
-            $(".controls-top").addClass("visible").css({ "opacity": 1, "display": "block" });
-            const topControlsHeight = $(".controls-top").outerHeight() + 8;
-            $(".controls-top").animateCss("slideInDown", 250, function () {
-                updateControlsContainer();
-            });
-            $(".controls-top--container--tab").css("margin-top", `${topControlsHeight}px`);
-        }
+        $(".controls-top").toggleClass("visible");
+        updateControlsContainer();
     });
 
     updateControlsContainer(true);
