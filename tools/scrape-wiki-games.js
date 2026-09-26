@@ -52,7 +52,8 @@ let secrets;
     const baseHeaders = {
         "User-Agent": secrets.ua,
         "Cookie": `cf_clearance=${secrets.cf_clearance}`,
-        "Referer": "https://yume.wiki/"
+        "Referer": "https://yume.wiki/",
+        "X-Yume-2kki-Explorer": ""
     };
     fetchImpl = (url, options = {}) => fetch(url, {
         ...options,

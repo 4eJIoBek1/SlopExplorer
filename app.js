@@ -1183,8 +1183,7 @@ function parseWorldConn(conn) {
                 break;
             case "Chance":
                 ret.type |= ConnType.CHANCE;
-                // TODO: Implement chanceDescription
-                ret.typeParams[ConnType.CHANCE] = { params: conn.chancePercentage };
+                ret.typeParams[ConnType.CHANCE] = { params: conn.chancePercentage || '0%' };
                 break;
             case "Seasonal":
                 ret.type |= ConnType.SEASONAL;
