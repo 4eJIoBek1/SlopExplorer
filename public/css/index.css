@@ -146,6 +146,8 @@ h1 {
     left: calc(50% - 72px);
     margin-top: -8px;
     pointer-events: all;
+    display: flex;
+    justify-content: center;
 }
 
 .controls-bottom--container--tab {
