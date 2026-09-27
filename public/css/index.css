@@ -145,7 +145,7 @@ h1 {
     z-index: 5;
     top: 100%;
     left: calc(50% - 72px);
-    margin-top: -2px;
+    margin-top: 2px;
     pointer-events: all;
     display: flex;
     justify-content: center;
@@ -195,6 +195,10 @@ h1 {
     flex-direction: column;
     width: calc(100% - 16px);
     height: 30px;
+}
+
+.controls-top--container--tab > .controls--container--tab__button {
+    justify-content: flex-end;
 }
 
 .controls-side--container--tab > .controls--container--tab__button {
